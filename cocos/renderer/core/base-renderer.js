@@ -349,6 +349,7 @@ export default class BaseRenderer {
     this._usedTextureUnits = 0;
     this.frustum_test_func = intersect.aabb_frustum;
     this._accurateFrustumCulling = false;
+    this._currentView = null;
 
     this._viewPools = new RecyclePool(() => {
       return new View();
@@ -428,6 +429,7 @@ export default class BaseRenderer {
   }
 
   _reset() {
+    this._currentView = null;
     this._viewPools.reset();
     this._stageItemsPools.reset();
   }
@@ -446,6 +448,7 @@ export default class BaseRenderer {
 
   _render(view, scene) {
     const device = this._device;
+    this._currentView = view;
 
     // setup framebuffer
     device.setFrameBuffer(view._framebuffer);
@@ -567,6 +570,7 @@ export default class BaseRenderer {
       for (let qi = 0; qi < renderQueues.length; qi++) {
           this._renderQueueFn[renderQueues[qi]](view, this._stageItemsPools.data[qi]);
       }
+      this._stageItemsPools.reset();
   }
 
   _drawModel(item) {
