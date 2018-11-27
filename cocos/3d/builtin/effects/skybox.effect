@@ -1,0 +1,22 @@
+{
+  "techniques": [
+    {
+      "queue": "opaque-1000",
+      "passes": [
+        {
+          "stage": "default",
+          "program": "skybox",
+          "cullMode": "none"
+        }
+      ],
+      "layer": -1
+    }
+  ],
+
+  "properties": {
+    "cubeMap": {
+      "type": "samplerCube",
+      "value": null
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "techniques": [
+    {
+      "queue": "opaque",
+      "passes": [
+        {
+          "stage": "default",
+          "program": "simple",
+          "depthTest": true,
+          "depthWrite": true
+        }
+      ]
+    }
+  ],
+
+  "properties": {
+    "color": {
+      "type": "color4",
+      "value": [0.4, 0.4, 0.4, 1]
+    }
+  }
+}

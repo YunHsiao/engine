@@ -11,12 +11,14 @@ let defineRE = /#define\s+(\w+)\(([\w,\s]+)\)\s+(.*##.*)\n/g;
 let newlines = /\n+/g;
 let whitespaces = /\s+/g;
 let ident = /^[_a-zA-Z]\w*$/;
+let extensionRE = /(?:GL_)?(\w+)/;
 let comparators = /^[<=>]+$/;
 let ifprocessor = /#(el)?if/;
 let rangePragma = /range\(([\d.,\s]+)\)\s(\w+)/;
 let defaultPragma = /default\(([\d.,]+)\)/;
 let namePragma = /name\(([^)]+)\)/;
 let precision = /(low|medium|high)p/;
+let seperator = /###\s+(vert|frag).*/gi;
 
 // (HACKY) extract all builtin uniforms to the ignore list
 let uniformIgnoreList = (function() {
@@ -134,7 +136,7 @@ function extractParams(tokens, cache, uniforms, attributes, extensions) {
     if (dest === uniforms && uniformIgnoreList[tokens[i+4].data]) continue;
     if (dest === extensions) {
       if (defines.length > 1) console.warn('extensions must be under controll of no more than 1 define');
-      param.name = str.split(whitespaces)[1];
+      param.name = extensionRE.exec(str.split(whitespaces)[1])[1];
       param.define = defines[0];
       dest.push(param);
       continue;
@@ -254,30 +256,39 @@ let expandStructMacro = (function() {
   };
 })();
 
+function buildChunk(file) {
+  let content = fs.readFileSync(file, { encoding: 'utf8' });
+  let name = path_.basename(file, '.inc');
+  content = glslStripComment(content);
+  content = expandStructMacro(content);
+  return { name, content };
+}
+
 function buildChunks(dest, path, cache) {
-  let files = fsJetpack.find(path, { matching: ['**/*.vert', '**/*.frag'] });
+  let files = fsJetpack.find(path, { matching: ['**/*.inc'] });
   let code = '';
   for (let i = 0; i < files.length; ++i) {
-    let file = files[i];
-    let content = fs.readFileSync(file, { encoding: 'utf8' });
-    content = glslStripComment(content);
-    content = expandStructMacro(content);
-    cache[path_.basename(file)] = content;
-    content = content.replace(newlines, '\\n');
-    code += `  "${path_.basename(file)}": "${content}",\n`;
+    let { name, content } = buildChunk(files[i])
+    cache[name] = content;
+    code += `  "${name}": "${content.replace(newlines, '\\n')}",\n`;
   }
   fs.writeFileSync(dest, `{\n${code.slice(0, -2)}\n}`, { encoding: 'utf8' });
 }
 
+let buildTemplate = (function() {
+  let splitShaders = code => {
+    let res = {}, segs = code.split(seperator);
+    res.vert = segs[segs.findIndex(s => s.toLowerCase() === 'vert') + 1];
+    res.frag = segs[segs.findIndex(s => s.toLowerCase() === 'frag') + 1];
+    return res;
+  };
+  return function(file, cache) {
+    let name = path_.basename(file, '.glsl');
+    let { vert, frag } = splitShaders(fs.readFileSync(file, { encoding: 'utf8' }));
 
-let buildTemplates = (function() {
-  let buildTemplate = function(file, cache) {
-    let dir = path_.dirname(file);
-    let name = path_.basename(file, '.vert');
     let defines = [], defCache = { lines: [] }, tokens;
     let uniforms = [], attributes = [], extensions = [];
 
-    let vert = fs.readFileSync(path_.join(dir, name + '.vert'), { encoding: 'utf8' });
     vert = glslStripComment(vert);
     vert = unwindIncludes(vert, cache);
     tokens = tokenizer(vert);
@@ -285,7 +296,6 @@ let buildTemplates = (function() {
     extractParams(tokens, defCache, uniforms, attributes, extensions);
 
     defCache = { lines: [] };
-    let frag = fs.readFileSync(path_.join(dir, name + '.frag'), { encoding: 'utf8' });
     frag = glslStripComment(frag);
     frag = unwindIncludes(frag, cache);
     tokens = tokenizer(frag);
@@ -294,9 +304,12 @@ let buildTemplates = (function() {
 
     return { name, vert, frag, defines, uniforms, attributes, extensions };
   };
+})();
+
+let buildTemplates = (function() {
   let toOneLiner = o => '\n      ' + JSON.stringify(o).replace(/([,:])/g, '$1 ');
   return function (dest, path, cache) {
-    let files = fsJetpack.find(path, { matching: ['**/*.vert'] });
+    let files = fsJetpack.find(path, { matching: ['**/*.glsl'] });
     let code = '';
     for (let i = 0; i < files.length; ++i) {
       let temp = buildTemplate(files[i], cache);
