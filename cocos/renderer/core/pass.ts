@@ -305,8 +305,7 @@ export class Pass {
     }
 
     public serializePipelineStates () {
-        const shaderName = this._shader && this._shader.name;
-        let res = `${shaderName},${this._stage},${this._primitive}`;
+        let res = `${this._shader && this._shader.name},${this._stage},${this._primitive}`;
         res += serializeBlendState(this._bs);
         res += serializeDepthStencilState(this._dss);
         res += serializeRasterizerState(this._rs);
