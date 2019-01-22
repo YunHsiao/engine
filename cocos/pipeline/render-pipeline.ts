@@ -65,6 +65,7 @@ export class UBOLocal {
 const _vec4Array = new Float32Array(4);
 const _mat4Array = new Float32Array(16);
 const _outMat = new Mat4();
+const _outVec3 = new Vec3();
 
 export abstract class RenderPipeline {
 
@@ -310,28 +311,27 @@ export abstract class RenderPipeline {
         _vec4Array[3] = 1.0;
         this._uboGlobal.view.set(_vec4Array, UBOGlobal.SCREEN_SCALE_OFFSET);
 
-        const camera = view.camera;
-        mat4.array(_mat4Array, camera.matView);
+        mat4.array(_mat4Array, view.camera.matView);
         this._uboGlobal.view.set(_mat4Array, UBOGlobal.MAT_VIEW_OFFSET);
 
-        mat4.invert(_outMat, camera.matView);
+        mat4.invert(_outMat, view.camera.matView);
         mat4.array(_mat4Array, _outMat);
         this._uboGlobal.view.set(_mat4Array, UBOGlobal.MAT_VIEW_INV_OFFSET);
 
-        mat4.array(_mat4Array, camera.matProj);
+        mat4.array(_mat4Array, view.camera.matProj);
         this._uboGlobal.view.set(_mat4Array, UBOGlobal.MAT_PROJ_OFFSET);
 
-        mat4.invert(_outMat, camera.matProj);
+        mat4.invert(_outMat, view.camera.matProj);
         mat4.array(_mat4Array, _outMat);
         this._uboGlobal.view.set(_mat4Array, UBOGlobal.MAT_PROJ_INV_OFFSET);
 
-        mat4.array(_mat4Array, camera.matViewProj);
+        mat4.array(_mat4Array, view.camera.matViewProj);
         this._uboGlobal.view.set(_mat4Array, UBOGlobal.MAT_VIEW_PROJ_OFFSET);
 
-        mat4.array(_mat4Array, camera.matViewProjInv);
+        mat4.array(_mat4Array, view.camera.matViewProjInv);
         this._uboGlobal.view.set(_mat4Array, UBOGlobal.MAT_VIEW_PROJ_INV_OFFSET);
 
-        vec3.array(_vec4Array, camera.position);
+        vec3.array(_vec4Array, view.camera.node && view.camera.node.getWorldPosition(_outVec3));
         _vec4Array[3] = 1.0;
         this._uboGlobal.view.set(_vec4Array, UBOGlobal.CAMERA_POS_OFFSET);
 

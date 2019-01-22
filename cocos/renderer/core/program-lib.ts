@@ -36,13 +36,14 @@ interface IProgramInfo extends IShaderInfo {
     id: number;
     defines: IDefineRecord[];
 }
-
-class ProgramLib {
+export class ProgramLib {
+    protected _device: GFXDevice;
     protected _precision: string;
     protected _templates: Record<string, IProgramInfo>;
     protected _cache: Record<string, GFXShader | null>;
 
-    constructor () {
+    constructor (device: GFXDevice) {
+        this._device = device;
         this._precision = `precision highp float;\n`;
         this._templates = {};
         this._cache = {};
@@ -59,9 +60,7 @@ class ProgramLib {
      *       { name: 'shadow', type: 'boolean' },
      *       { name: 'lightCount', type: 'number', range: [1, 4] }
      *     ],
-     *     blocks: [{ name: 'Constants', binding: 0, size: 16, members: [
-     *       { name: 'color', type: 'vec4' }], defines: [] }
-     *     ],
+     *     blocks: [{ name: 'Constants', binding: 0, size: 16, members: [{ name: 'color', type: 'vec4' }], defines: [] }],
      *     dependencies: { 'USE_NORMAL_TEXTURE': 'OES_standard_derivatives' },
      *   };
      *   programLib.define(program);
@@ -115,7 +114,7 @@ class ProgramLib {
         return key << 8 | (tmpl.id & 0xff);
     }
 
-    public getGFXShader (device: GFXDevice, name: string, defines: IDefineMap = {}) {
+    public getGFXShader (name: string, defines: IDefineMap = {}) {
         const key = this.getKey(name, defines);
         let program = this._cache[key];
         if (program !== undefined) {
@@ -124,12 +123,12 @@ class ProgramLib {
 
         // get template
         const tmpl = this._templates[name];
-        const customDef = _generateDefines(device, defines, tmpl.defines, tmpl.dependencies) + '\n';
+        const customDef = _generateDefines(this._device, defines, tmpl.defines, tmpl.dependencies) + '\n';
         const vert = customDef + tmpl.vert;
         const frag = customDef + tmpl.frag;
 
         const instanceName = Object.keys(defines).reduce((acc, cur) => defines[cur] ? `${acc}|${cur}` : acc, name);
-        program = device.createShader({
+        program = this._device.createShader({
             name: instanceName,
             blocks: tmpl.blocks,
             samplers: tmpl.samplers,
@@ -170,6 +169,3 @@ function convertToBlockInfo (block: GFXUniformBlock): IBlockInfo {
         size,
     };
 }
-
-const programLib = cc.programLib = new ProgramLib();
-export { programLib };

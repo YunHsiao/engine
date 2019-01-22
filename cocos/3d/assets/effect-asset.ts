@@ -3,7 +3,6 @@ import { ccclass, property } from '../../core/data/class-decorator';
 import { GFXDynamicState, GFXPrimitiveMode } from '../../gfx/define';
 import { GFXBlendState, GFXDepthStencilState, GFXRasterizerState } from '../../gfx/pipeline-state';
 import { RenderPassStage } from '../../pipeline/define';
-import { programLib } from '../../renderer/core/program-lib';
 
 export interface IPropertyInfo {
     type: number; // auto-extracted if not specified
@@ -98,7 +97,8 @@ export class EffectAsset extends Asset {
     public shaders: IShaderInfo[] = [];
 
     public onLoaded () {
-        this.shaders.forEach((s) => programLib.define(s));
+        const lib = cc.game._programLib;
+        this.shaders.forEach((s) => lib.define(s));
         EffectAsset.register(this);
     }
 }
