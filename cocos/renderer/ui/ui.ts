@@ -4,6 +4,7 @@ import RecyclePool from '../../3d/memop/recycle-pool';
 import { CanvasComponent } from '../../3d/ui/components/canvas-component';
 import { UIRenderComponent } from '../../3d/ui/components/ui-render-component';
 import { IMeshBufferInitData, MeshBuffer } from '../../3d/ui/mesh-buffer';
+import { SpriteFrame } from '../../assets/CCSpriteFrame';
 import { CachedArray } from '../../core/memop/cached-array';
 import { Root } from '../../core/root';
 import { GFXBindingLayout } from '../../gfx/binding-layout';
@@ -42,6 +43,7 @@ export interface IUIRenderItem {
 export interface IUIRenderData {
     meshBuffer: MeshBuffer;
     material: Material;
+    texture: SpriteFrame;
     camera: Camera;
 }
 
@@ -277,12 +279,12 @@ export class UI {
     private _reset () {
         this._bufferPool.reset();
         this._commitUIRenderDataPool.reset();
-        this._commitUIRenderDatas.length = 0;
     }
 
     private _commitComp (comp: UIRenderComponent) {
         comp.updateAssembler(this);
         // const canvasComp: CanvasComponent | null = this.getScreen(comp.viewID);
+
         // const renderDataFormat: IUIRenderData = this._commitUIRenderDataPool.add();
         // renderDataFormat.meshBuffer = buffer;
         // renderDataFormat.material = comp.material as Material;
