@@ -5,7 +5,6 @@
 import { intersect } from '../3d/geom-utils';
 import { Root } from '../core/root';
 import { Mat4, Vec3, Vec4 } from '../core/value-types';
-import { vec4 } from '../core/vmath';
 import { GFXBuffer } from '../gfx/buffer';
 import {
     GFXBindingType,
@@ -1416,7 +1415,7 @@ export abstract class RenderPipeline {
                 fv[UBOGlobal.MAIN_LIT_COLOR_OFFSET + 3] = mainLight.illuminance * exposure;
             }
         } else {
-            vec4.array(fv, _v4Zero, UBOGlobal.MAIN_LIT_COLOR_OFFSET);
+            Vec4.array(fv, _v4Zero, UBOGlobal.MAIN_LIT_COLOR_OFFSET);
         }
 
         _vec4Array.set(ambient.skyColor);

@@ -2,8 +2,7 @@
  * @category gemotry-utils
  */
 
-import { Mat4, Vec3 } from '../../core/value-types';
-import { vec4 } from '../../core/vmath';
+import { Mat4, Vec3, Vec4 } from '../../core/value-types';
 import enums from './enums';
 
 const v1 = Vec3.create(0, 0, 0);
@@ -173,8 +172,8 @@ export default class plane {
     public transform (mat: Mat4): void {
         Mat4.invert(temp_mat, mat);
         Mat4.transpose(temp_mat, temp_mat);
-        vec4.set(temp_vec4, this.n.x, this.n.y, this.n.z, this.d);
-        vec4.transformMat4(temp_vec4, temp_vec4, temp_mat);
+        Vec4.set(temp_vec4, this.n.x, this.n.y, this.n.z, this.d);
+        Vec4.transformMat4(temp_vec4, temp_vec4, temp_mat);
         Vec3.set(this.n, temp_vec4.x, temp_vec4.y, temp_vec4.z);
         this.d = temp_vec4.w;
     }

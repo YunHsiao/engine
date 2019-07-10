@@ -55,7 +55,7 @@ export class Vec3 extends ValueType {
     /**
      * 构造具有指定分量的向量。
      */
-    public static create (x: number, y: number, z: number): Vec3;
+    public static create (x?: number, y?: number, z?: number): Vec3;
 
     /**
      * @zh 创建新的实例

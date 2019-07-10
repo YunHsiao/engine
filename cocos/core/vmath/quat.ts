@@ -32,7 +32,11 @@ export class quat {
      * @zh 复制目标四元数
      */
     public static copy<Out extends quat> (out: Out, a: quat) {
-        return vec4.copy(out, a);
+        out.x = a.x;
+        out.y = a.y;
+        out.z = a.z;
+        out.w = a.w;
+        return out;
     }
 
     /**
