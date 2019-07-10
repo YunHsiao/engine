@@ -49,15 +49,11 @@ export class Vec3 extends ValueType {
 
     /**
      * 构造与指定向量相等的向量，或如果不指定的话，零向量。
-     * @param v 相比较的向量。
      */
     public static create (v?: Vec3): Vec3;
 
     /**
      * 构造具有指定分量的向量。
-     * @param [x=0] 指定的 x 分量。
-     * @param [y=0] 指定的 y 分量。
-     * @param [z=0] 指定的 z 分量。
      */
     public static create (x: number, y: number, z: number): Vec3;
 
@@ -634,11 +630,11 @@ export class Vec3 extends ValueType {
      */
     public z: number;
 
-    constructor (x?: number, y?: number, z?: number) {
+    constructor (x = 0, y = 0, z = 0) {
         super();
-        this.x = x || 0;
-        this.y = y || 0;
-        this.z = z || 0;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     /**

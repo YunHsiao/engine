@@ -2,8 +2,8 @@
  * @category gemotry-utils
  */
 
-import { Vec3 } from '../../core/value-types';
-import { mat3, mat4, quat } from '../../core/vmath';
+import { Mat4, Vec3 } from '../../core/value-types';
+import { mat3, quat } from '../../core/vmath';
 import enums from './enums';
 
 const _v3_tmp = Vec3.create();
@@ -13,7 +13,7 @@ const _v3_tmp4 = Vec3.create();
 const _m3_tmp = mat3.create();
 
 // https://zeuxcg.org/2010/10/17/aabb-from-obb-with-component-wise-abs/
-const transform_extent_m4 = (out: Vec3, extent: Vec3, m4: mat4) => {
+const transform_extent_m4 = (out: Vec3, extent: Vec3, m4: Mat4) => {
     _m3_tmp.m00 = Math.abs(m4.m00); _m3_tmp.m01 = Math.abs(m4.m01); _m3_tmp.m02 = Math.abs(m4.m02);
     _m3_tmp.m03 = Math.abs(m4.m04); _m3_tmp.m04 = Math.abs(m4.m05); _m3_tmp.m05 = Math.abs(m4.m06);
     _m3_tmp.m06 = Math.abs(m4.m08); _m3_tmp.m07 = Math.abs(m4.m09); _m3_tmp.m08 = Math.abs(m4.m10);
@@ -143,7 +143,7 @@ export default class aabb {
      * @param matrix 矩阵。
      * @returns {aabb} out 接受操作的 aabb。
      */
-    public static transform (out: aabb, a: aabb, matrix: mat4): aabb {
+    public static transform (out: aabb, a: aabb, matrix: Mat4): aabb {
         Vec3.transformMat4(out.center, a.center, matrix);
         transform_extent_m4(out.halfExtents, a.halfExtents, matrix);
         return out;
@@ -192,7 +192,7 @@ export default class aabb {
      * @param scale 变换的缩放部分。
      * @param out 变换的目标。
      */
-    public transform (m: mat4, pos: Vec3 | null, rot: quat | null, scale: Vec3 | null, out: aabb) {
+    public transform (m: Mat4, pos: Vec3 | null, rot: quat | null, scale: Vec3 | null, out: aabb) {
         Vec3.transformMat4(out.center, this.center, m);
         transform_extent_m4(out.halfExtents, this.halfExtents, m);
     }

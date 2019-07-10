@@ -2,8 +2,8 @@
  * @category gemotry-utils
  */
 
-import { Vec3 } from '../../core/value-types';
-import { mat3, mat4, quat } from '../../core/vmath';
+import { Mat4, Vec3 } from '../../core/value-types';
+import { mat3, quat } from '../../core/vmath';
 import enums from './enums';
 
 const _v3_tmp = Vec3.create();
@@ -204,7 +204,7 @@ export default class obb {
      * @param scale 变换的缩放部分。
      * @param out 变换的目标。
      */
-    public transform (m: mat4, pos: Vec3, rot: quat, scale: Vec3, out: obb) {
+    public transform (m: Mat4, pos: Vec3, rot: quat, scale: Vec3, out: obb) {
         Vec3.transformMat4(out.center, this.center, m);
         // parent shape doesn't contain rotations for now
         mat3.fromQuat(out.orientation, rot);
@@ -218,7 +218,7 @@ export default class obb {
      * @param rot 变换的旋转部分。
      * @param out 变换的目标。
      */
-    public translateAndRotate (m: mat4, rot: quat, out: obb){
+    public translateAndRotate (m: Mat4, rot: quat, out: obb){
         Vec3.transformMat4(out.center, this.center, m);
         // parent shape doesn't contain rotations for now
         mat3.fromQuat(out.orientation, rot);

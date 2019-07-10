@@ -2,8 +2,7 @@
  * @category gemotry-utils
  */
 
-import { Vec3 } from '../../core/value-types';
-import { mat4 } from '../../core/vmath';
+import { Mat4, Vec3 } from '../../core/value-types';
 import enums from './enums';
 import plane from './plane';
 
@@ -29,7 +28,7 @@ export class frustum {
 
     public static createOrtho = (() => {
         const _temp_v3 = new Vec3();
-        return (out: frustum, width: number, height: number, near: number, far: number, transform: mat4) => {
+        return (out: frustum, width: number, height: number, near: number, far: number, transform: Mat4) => {
             const halfWidth = width / 2;
             const halfHeight = height / 2;
             Vec3.set(_temp_v3, halfWidth, halfHeight, near);
@@ -108,10 +107,10 @@ export class frustum {
      * Update the frustum information according to the given transform matrix.
      * Note that the resulting planes are not normalized under normal mode.
      *
-     * @param {mat4} m the view-projection matrix
-     * @param {mat4} inv the inverse view-projection matrix
+     * @param {Mat4} m the view-projection matrix
+     * @param {Mat4} inv the inverse view-projection matrix
      */
-    public update (m: mat4, inv: mat4) {
+    public update (m: Mat4, inv: Mat4) {
         // RTR4, ch. 22.14.1, p. 983
         // extract frustum planes from view-proj matrix.
 
@@ -150,7 +149,7 @@ export class frustum {
         }
     }
 
-    public transform (mat: mat4) {
+    public transform (mat: Mat4) {
         if (this._type !== enums.SHAPE_FRUSTUM_ACCURATE) {
             return;
         }

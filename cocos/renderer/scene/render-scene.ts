@@ -3,7 +3,6 @@ import { aabb, intersect, ray, triangle } from '../../3d/geom-utils';
 import { RecyclePool } from '../../3d/memop';
 import { Root } from '../../core/root';
 import { Mat4, Vec3 } from '../../core/value-types';
-import { mat4 } from '../../core/vmath';
 import { GFXPrimitiveMode } from '../../gfx/define';
 import { Layers } from '../../scene-graph/layers';
 import { Node } from '../../scene-graph/node';
@@ -226,7 +225,7 @@ export class RenderScene {
             const transform = m.transform;
             if (!transform || !m.enabled || !cc.Layers.check(m.node.layer, mask) || !m.modelBounds) { continue; }
             // transform ray back to model space
-            mat4.invert(m4, transform.getWorldMatrix(m4));
+            Mat4.invert(m4, transform.getWorldMatrix(m4));
             Vec3.transformMat4(modelRay.o, worldRay.o, m4);
             Vec3.normalize(modelRay.d, Vec3.transformMat4Normal(modelRay.d, worldRay.d, m4));
             // broadphase

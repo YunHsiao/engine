@@ -1,6 +1,6 @@
 import { frustum, ray } from '../../3d/geom-utils';
 import { Mat4, Rect, Vec3 } from '../../core/value-types';
-import { color4, lerp, mat4, toRadian } from '../../core/vmath';
+import { color4, lerp, toRadian } from '../../core/vmath';
 import { GFXClearFlag, IGFXColor } from '../../gfx/define';
 import { RenderView } from '../../pipeline/render-view';
 import { Node } from '../../scene-graph/node';
@@ -173,7 +173,7 @@ export class Camera {
         if (this._node) {
             // view matrix
             if (this._node.hasChanged || forceUpdate) {
-                mat4.invert(this._matView, this.node.worldMatrix);
+                Mat4.invert(this._matView, this.node.worldMatrix);
 
                 this._forward.x = -this._matView.m02;
                 this._forward.y = -this._matView.m06;
@@ -184,18 +184,18 @@ export class Camera {
             // projection matrix
             if (this._isProjDirty) {
                 if (this._proj === CameraProjection.PERSPECTIVE) {
-                    mat4.perspective(this._matProj, this._fov, this._aspect, this._nearClip, this._farClip);
+                    Mat4.perspective(this._matProj, this._fov, this._aspect, this._nearClip, this._farClip);
                 } else {
                     const x = this._orthoHeight * this._aspect;
                     const y = this._orthoHeight;
-                    mat4.ortho(this._matProj, -x, x, -y, y, this._nearClip, this._farClip);
+                    Mat4.ortho(this._matProj, -x, x, -y, y, this._nearClip, this._farClip);
                 }
             }
 
             // view-projection
             if (this._node.hasChanged || this._isProjDirty || forceUpdate) {
-                mat4.multiply(this._matViewProj, this._matProj, this._matView);
-                mat4.invert(this._matViewProjInv, this._matViewProj);
+                Mat4.multiply(this._matViewProj, this._matProj, this._matView);
+                Mat4.invert(this._matViewProjInv, this._matViewProj);
                 this._frustum.update(this._matViewProj, this._matViewProjInv);
             }
 
@@ -212,20 +212,20 @@ export class Camera {
         farClip = Math.min(farClip, this._farClip);
 
         // view matrix
-        mat4.invert(this._matView,  this.node.worldMatrix);
+        Mat4.invert(this._matView,  this.node.worldMatrix);
 
         // projection matrix
         if (this._proj === CameraProjection.PERSPECTIVE) {
-            mat4.perspective(_tempMat1, this._fov, this._aspect, nearClip, farClip);
+            Mat4.perspective(_tempMat1, this._fov, this._aspect, nearClip, farClip);
         } else {
             const x = this._orthoHeight * this._aspect;
             const y = this._orthoHeight;
-            mat4.ortho(_tempMat1, -x, x, -y, y, nearClip, farClip);
+            Mat4.ortho(_tempMat1, -x, x, -y, y, nearClip, farClip);
         }
 
         // view-projection
-        mat4.multiply(_tempMat2, _tempMat1, this._matView);
-        mat4.invert(_tempMat1, _tempMat2);
+        Mat4.multiply(_tempMat2, _tempMat1, this._matView);
+        Mat4.invert(_tempMat1, _tempMat2);
         out.update(_tempMat2, _tempMat1);
     }
 

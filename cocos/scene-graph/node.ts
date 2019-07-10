@@ -35,7 +35,7 @@ import { eventManager } from '../core/platform/event-manager';
 import { SystemEventType } from '../core/platform/event-manager/event-enum';
 import { Mat4, Quat, Vec3 } from '../core/value-types';
 import { Size, Vec2 } from '../core/value-types';
-import { mat4, quat } from '../core/vmath';
+import { quat } from '../core/vmath';
 import { BaseNode } from './base-node';
 import { Layers } from './layers';
 import { NodeEventProcessor } from './node-event-processor';
@@ -353,7 +353,7 @@ export class Node extends BaseNode {
     public updateWorldTransformFull () {
         this.updateWorldTransform();
         if (!this._matDirty) { return; }
-        mat4.fromRTS(this._mat, this._rot, this._pos, this._scale);
+        Mat4.fromRTS(this._mat, this._rot, this._pos, this._scale);
         this._matDirty = false;
     }
 
@@ -774,7 +774,7 @@ export class Node extends BaseNode {
     public getWorldMatrix (out?: Mat4) {
         this.updateWorldTransformFull();
         if (!out) { out = new Mat4(); }
-        return mat4.copy(out, this._mat);
+        return Mat4.copy(out, this._mat);
     }
 
     /**
@@ -795,7 +795,7 @@ export class Node extends BaseNode {
     public getWorldRS (out?: Mat4): Mat4 {
         this.updateWorldTransformFull();
         if (!out) { out = new Mat4(); }
-        mat4.copy(out, this._mat);
+        Mat4.copy(out, this._mat);
         out.m12 = 0; out.m13 = 0; out.m14 = 0;
         return out;
     }
@@ -808,7 +808,7 @@ export class Node extends BaseNode {
     public getWorldRT (out?: Mat4): Mat4 {
         this.updateWorldTransform();
         if (!out) { out = new Mat4(); }
-        return mat4.fromRT(out, this._rot, this._pos);
+        return Mat4.fromRT(out, this._rot, this._pos);
     }
 
     // ===============================

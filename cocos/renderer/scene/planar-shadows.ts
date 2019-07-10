@@ -1,7 +1,7 @@
 import { Material } from '../../3d/assets/material';
 import { CachedArray } from '../../core/memop/cached-array';
 import { Color, Mat4, Quat, Vec3 } from '../../core/value-types';
-import { color4, mat4 } from '../../core/vmath';
+import { color4 } from '../../core/vmath';
 import { GFXCommandBuffer } from '../../gfx/command-buffer';
 import { GFXCommandBufferType } from '../../gfx/define';
 import { GFXInputAssembler } from '../../gfx/input-assembler';
@@ -112,7 +112,7 @@ export class PlanarShadows {
         m.m13 = ly * d;
         m.m14 = lz * d;
         m.m15 = NdL;
-        mat4.array(this.data, this._matLight);
+        Mat4.array(this.data, this._matLight);
         this._globalBindings.buffer!.update(this.data);
     }
 
@@ -140,7 +140,7 @@ export class PlanarShadows {
         m.m13 = ly * d;
         m.m14 = lz * d;
         m.m15 = 1;
-        mat4.array(this.data, this._matLight, UBOShadow.MAT_LIGHT_PLANE_PROJ_OFFSET);
+        Mat4.array(this.data, this._matLight, UBOShadow.MAT_LIGHT_PLANE_PROJ_OFFSET);
         this._globalBindings.buffer!.update(this.data);
     }
     // tslint:enable: one-variable-per-declaration

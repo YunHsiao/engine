@@ -5,7 +5,7 @@
 import { intersect } from '../3d/geom-utils';
 import { Root } from '../core/root';
 import { Mat4, Vec3, Vec4 } from '../core/value-types';
-import { mat4, vec4 } from '../core/vmath';
+import { vec4 } from '../core/vmath';
 import { GFXBuffer } from '../gfx/buffer';
 import {
     GFXBindingType,
@@ -1382,15 +1382,15 @@ export abstract class RenderPipeline {
         fv[UBOGlobal.NATIVE_SIZE_OFFSET + 2] = 1.0 / fv[UBOGlobal.NATIVE_SIZE_OFFSET];
         fv[UBOGlobal.NATIVE_SIZE_OFFSET + 3] = 1.0 / fv[UBOGlobal.NATIVE_SIZE_OFFSET + 1];
 
-        mat4.array(fv, camera.matView, UBOGlobal.MAT_VIEW_OFFSET);
+        Mat4.array(fv, camera.matView, UBOGlobal.MAT_VIEW_OFFSET);
 
-        mat4.invert(_outMat, camera.matView);
-        mat4.array(fv, _outMat, UBOGlobal.MAT_VIEW_INV_OFFSET);
-        mat4.array(fv, camera.matProj, UBOGlobal.MAT_PROJ_OFFSET);
-        mat4.invert(_outMat, camera.matProj);
-        mat4.array(fv, _outMat, UBOGlobal.MAT_PROJ_INV_OFFSET);
-        mat4.array(fv, camera.matViewProj, UBOGlobal.MAT_VIEW_PROJ_OFFSET);
-        mat4.array(fv, camera.matViewProjInv, UBOGlobal.MAT_VIEW_PROJ_INV_OFFSET);
+        Mat4.invert(_outMat, camera.matView);
+        Mat4.array(fv, _outMat, UBOGlobal.MAT_VIEW_INV_OFFSET);
+        Mat4.array(fv, camera.matProj, UBOGlobal.MAT_PROJ_OFFSET);
+        Mat4.invert(_outMat, camera.matProj);
+        Mat4.array(fv, _outMat, UBOGlobal.MAT_PROJ_INV_OFFSET);
+        Mat4.array(fv, camera.matViewProj, UBOGlobal.MAT_VIEW_PROJ_OFFSET);
+        Mat4.array(fv, camera.matViewProjInv, UBOGlobal.MAT_VIEW_PROJ_INV_OFFSET);
         Vec3.array(fv, camera.position, UBOGlobal.CAMERA_POS_OFFSET);
 
         const exposure = camera.exposure;

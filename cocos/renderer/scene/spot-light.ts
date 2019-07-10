@@ -1,6 +1,5 @@
 import { aabb, frustum } from '../../3d/geom-utils';
 import { Mat4, Quat, Vec3 } from '../../core/value-types';
-import { mat4 } from '../../core/vmath';
 import { Node } from '../../scene-graph/node';
 import { Light, LightType, nt2lm } from './light';
 import { RenderScene } from './render-scene';
@@ -90,13 +89,13 @@ export class SpotLight extends Light {
 
             // view matrix
             this._node.getWorldRT(_matView);
-            mat4.invert(_matView, _matView);
+            Mat4.invert(_matView, _matView);
 
-            mat4.perspective(_matProj, this._angle, 1, 0.001, this._range);
+            Mat4.perspective(_matProj, this._angle, 1, 0.001, this._range);
 
             // view-projection
-            mat4.multiply(_matViewProj, _matProj, _matView);
-            mat4.invert(_matViewProjInv, _matViewProj);
+            Mat4.multiply(_matViewProj, _matProj, _matView);
+            Mat4.invert(_matViewProjInv, _matViewProj);
 
             this._frustum.update(_matViewProj, _matViewProjInv);
         }

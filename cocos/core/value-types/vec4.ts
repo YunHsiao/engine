@@ -29,9 +29,10 @@
  */
 
 import CCClass from '../data/class';
-import { clamp, vec3, vec4 } from '../vmath';
+import { clamp, vec4 } from '../vmath';
 import { Mat4 } from './mat4';
 import { ValueType } from './value-type';
+import { Vec3 } from './vec3';
 
 /**
  * 四维向量。
@@ -256,7 +257,7 @@ export class Vec4 extends ValueType {
      * @param other 指定的向量。
      */
     public cross (vector: Vec4) {
-        vec3.cross(this, this, vector);
+        Vec3.cross(this, this, vector);
     }
 
     /**

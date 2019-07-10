@@ -2,8 +2,8 @@
  * @category gemotry-utils
  */
 
-import { Vec3 } from '../../core/value-types';
-import { mat4, vec4 } from '../../core/vmath';
+import { Mat4, Vec3 } from '../../core/value-types';
+import { vec4 } from '../../core/vmath';
 import enums from './enums';
 
 const v1 = Vec3.create(0, 0, 0);
@@ -170,9 +170,9 @@ export default class plane {
      * 变换一个平面。
      * @param mat
      */
-    public transform (mat: mat4): void {
-        mat4.invert(temp_mat, mat);
-        mat4.transpose(temp_mat, temp_mat);
+    public transform (mat: Mat4): void {
+        Mat4.invert(temp_mat, mat);
+        Mat4.transpose(temp_mat, temp_mat);
         vec4.set(temp_vec4, this.n.x, this.n.y, this.n.z, this.d);
         vec4.transformMat4(temp_vec4, temp_vec4, temp_mat);
         Vec3.set(this.n, temp_vec4.x, temp_vec4.y, temp_vec4.z);
