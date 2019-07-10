@@ -29,14 +29,14 @@
  */
 
 import CCClass from '../data/class';
-import {clamp, vec3, vec4} from '../vmath';
-import Mat4 from './mat4';
+import { clamp, vec3, vec4 } from '../vmath';
+import { Mat4 } from './mat4';
 import { ValueType } from './value-type';
 
 /**
  * 四维向量。
  */
-export default class Vec4 extends ValueType {
+export class Vec4 extends ValueType {
 
     /**
      * 根据指定的插值比率，从当前向量到目标向量之间做插值。

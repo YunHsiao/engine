@@ -37,7 +37,7 @@ const toFloat = 1 / 255;
  * 通过 Red、Green、Blue 颜色通道表示颜色，并通过 Alpha 通道表示不透明度。
  * 每个通道都为取值范围 [0, 255] 的整数。
  */
-export default class Color extends ValueType {
+export class Color extends ValueType {
 
     /**
      * 创建并获取（不透明的）纯白色，各通道值依次为 (255, 255, 255, 255)。

@@ -4,7 +4,7 @@
 
 import { intersect, sphere } from '../../3d/geom-utils';
 import { Root } from '../../core/root';
-import { v3 } from '../../core/value-types/vec3';
+import { Vec3 } from '../../core/value-types';
 import { vec3 } from '../../core/vmath';
 import { GFXBuffer } from '../../gfx/buffer';
 import { GFXBindingType, GFXBufferUsageBit, GFXMemoryUsageBit } from '../../gfx/define';
@@ -35,7 +35,7 @@ const _vec4Array = new Float32Array(4);
 const _sphere = sphere.create(0, 0, 0, 1);
 const _tempLightIndex = [] as number[];
 const _tempLightDist = [] as number[];
-const _tempVec3 = v3();
+const _tempVec3 = Vec3.create();
 
 /**
  * @zh

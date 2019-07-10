@@ -1,6 +1,5 @@
 import { aabb, frustum } from '../../3d/geom-utils';
 import { Mat4, Quat, Vec3 } from '../../core/value-types';
-import { v3 } from '../../core/value-types/vec3';
 import { mat4, vec3 } from '../../core/vmath';
 import { Node } from '../../scene-graph/node';
 import { Light, LightType, nt2lm } from './light';
@@ -79,7 +78,7 @@ export class SpotLight extends Light {
         this._type = LightType.SPOT;
         this._aabb = aabb.create();
         this._frustum = frustum.create();
-        this._pos = v3();
+        this._pos = Vec3.create();
     }
 
     public update () {

@@ -6,13 +6,13 @@ import { ccclass, property } from '../core/data/class-decorator';
 import { binarySearchEpsilon as binarySearch } from '../core/data/utils/binary-search';
 import { error, errorID } from '../core/platform/CCDebug';
 import { Quat, ValueType, Vec2, Vec3, Vec4 } from '../core/value-types';
-import { ccenum } from '../core/value-types/enum';
+import { CCEnum } from '../core/value-types/enum';
 import * as vmath from '../core/vmath';
 import { PropertyBlendState } from './animation-blend-state';
 import { bezierByTime, BezierControlPoints } from './bezier';
 import * as blending from './blending';
 import * as easing from './easing';
-import { MotionPath, sampleMotionPaths } from './motion-path-helper';
+import { MotionPath } from './motion-path-helper';
 import { ILerpable, isLerpable } from './types';
 
 /**

@@ -34,16 +34,16 @@ import { ValueType } from './value-type';
 import { Vec3 } from './vec3';
 
 /**
- * 表示四维（4x4）矩阵。
+ * 表示三维（4x4）矩阵。
  */
 // tslint:disable:one-variable-per-declaration
-export class Mat4 extends ValueType {
+export class Mat3 extends ValueType {
 
     /**
      * 计算当前矩阵的转置矩阵。
      * @param out 返回值，返回转置矩阵。
      */
-    public static transpose (out: Mat4, mat: Mat4) {
+    public static transpose (out: Mat3, mat: Mat3) {
         out.m00 = mat.m00;
         out.m01 = mat.m04;
         out.m02 = mat.m08;
@@ -68,7 +68,7 @@ export class Mat4 extends ValueType {
      * @param a 矩阵a
      * @param b 矩阵b
      */
-    public static add (out: Mat4, a: Mat4, b: Mat4) {
+    public static add (out: Mat3, a: Mat3, b: Mat3) {
         out.m00 = a.m00 + b.m00;
         out.m01 = a.m01 + b.m01;
         out.m02 = a.m02 + b.m02;
@@ -93,7 +93,7 @@ export class Mat4 extends ValueType {
      * @param a 矩阵a
      * @param b 矩阵b
      */
-    public static sub (out: Mat4, a: Mat4, b: Mat4) {
+    public static sub (out: Mat3, a: Mat3, b: Mat3) {
         out.m00 = a.m00 - b.m00;
         out.m01 = a.m01 - b.m01;
         out.m02 = a.m02 - b.m02;
@@ -118,7 +118,7 @@ export class Mat4 extends ValueType {
      * @param a 矩阵a
      * @param b 矩阵b
      */
-    public static mul (out: Mat4, a: Mat4, b: Mat4) {
+    public static mul (out: Mat3, a: Mat3, b: Mat3) {
         const a00 = a.m00, a01 = a.m01, a02 = a.m02, a03 = a.m03,
             a10 = a.m04, a11 = a.m05, a12 = a.m06, a13 = a.m07,
             a20 = a.m08, a21 = a.m09, a22 = a.m10, a23 = a.m11,
@@ -156,7 +156,7 @@ export class Mat4 extends ValueType {
      * @param mat 矩阵
      * @param scalar 标量
      */
-    public static mulScalar (out: Mat4, mat: Mat4, scalar: number) {
+    public static mulScalar (out: Mat3, mat: Mat3, scalar: number) {
         out.m00 = mat.m00 * scalar;
         out.m01 = mat.m01 * scalar;
         out.m02 = mat.m02 * scalar;
@@ -181,7 +181,7 @@ export class Mat4 extends ValueType {
      * @param mat 矩阵
      * @param vec 向量
      */
-    public static translate (out: Mat4, mat: Mat4, vec: Vec3) {
+    public static translate (out: Mat3, mat: Mat3, vec: Vec3) {
         out.m00 = mat.m00; out.m01 = mat.m01; out.m02 = mat.m02; out.m03 = mat.m03;
         out.m04 = mat.m04; out.m05 = mat.m05; out.m06 = mat.m06; out.m07 = mat.m07;
         out.m08 = mat.m08; out.m09 = mat.m09; out.m10 = mat.m10; out.m11 = mat.m11;
@@ -198,7 +198,7 @@ export class Mat4 extends ValueType {
      * @param mat 矩阵
      * @param vec 向量
      */
-    public static scale (out: Mat4, mat: Mat4, vec: Vec3) {
+    public static scale (out: Mat3, mat: Mat3, vec: Vec3) {
         out.m00 = mat.m00 * vec.x;
         out.m01 = mat.m01 * vec.x;
         out.m02 = mat.m02 * vec.x;
@@ -224,7 +224,7 @@ export class Mat4 extends ValueType {
      * @param rad 旋转角度（弧度制）
      * @param axis 旋转轴
      */
-    public static rotate (out: Mat4, mat: Mat4, rad: number, axis: Vec3) {
+    public static rotate (out: Mat3, mat: Mat3, rad: number, axis: Vec3) {
         let x = axis.x, y = axis.y, z = axis.z;
 
         let len = Math.sqrt(x * x + y * y + z * z);
@@ -350,7 +350,7 @@ export class Mat4 extends ValueType {
      * 构造与指定矩阵相等的矩阵。
      * @param other 相比较的矩阵。
      */
-    constructor (other: Mat4);
+    constructor (other: Mat3);
 
     /**
      * 构造具有指定元素的矩阵。
@@ -378,7 +378,7 @@ export class Mat4 extends ValueType {
         m12?: number, m13?: number, m14?: number, m15?: number);
 
     constructor (
-        m00: Mat4 | number = 1, m01 = 0, m02 = 0, m03 = 0,
+        m00: Mat3 | number = 1, m01 = 0, m02 = 0, m03 = 0,
         m04 = 0, m05 = 1, m06 = 0, m07 = 0,
         m08 = 0, m09 = 0, m10 = 1, m11 = 0,
         m12 = 0, m13 = 0, m14 = 0, m15 = 1) {
@@ -401,7 +401,7 @@ export class Mat4 extends ValueType {
      */
     public clone () {
         const t = this;
-        return new Mat4(
+        return new Mat3(
             t.m00, t.m01, t.m02, t.m03,
             t.m04, t.m05, t.m06, t.m07,
             t.m08, t.m09, t.m10, t.m11,
@@ -413,7 +413,7 @@ export class Mat4 extends ValueType {
      * @param other 相比较的矩阵。
      * @returns `this`
      */
-    public set (other: Mat4) {
+    public set (other: Mat3) {
         const t = this;
         t.m00 = other.m00;
         t.m01 = other.m01;
@@ -439,7 +439,7 @@ export class Mat4 extends ValueType {
      * @param mat 相比较的矩阵。
      * @returns 两矩阵的各元素都分别相等时返回 `true`；否则返回 `false`。
      */
-    public equals (mat: Mat4): boolean {
+    public equals (mat: Mat3): boolean {
         return this.m00 === mat.m00 && this.m01 === mat.m01 && this.m02 === mat.m02 && this.m03 === mat.m03 &&
             this.m04 === mat.m04 && this.m05 === mat.m05 && this.m06 === mat.m06 && this.m07 === mat.m07 &&
             this.m08 === mat.m08 && this.m09 === mat.m09 && this.m10 === mat.m10 && this.m11 === mat.m11 &&
@@ -451,7 +451,7 @@ export class Mat4 extends ValueType {
      * @param other 相比较的矩阵。
      * @returns 两矩阵的各元素都分别相等时返回 `true`；否则返回 `false`。
      */
-    public fuzzyEquals (other: Mat4): boolean {
+    public fuzzyEquals (other: Mat3): boolean {
         return xmat4.equals(this, other);
     }
 
@@ -600,7 +600,7 @@ export class Mat4 extends ValueType {
      * 矩阵加法。将当前矩阵与指定矩阵的相加，结果返回给当前矩阵。
      * @param mat 相加的矩阵
      */
-    public addSelf (mat: Mat4) {
+    public addSelf (mat: Mat3) {
         this.m00 = this.m00 + mat.m00;
         this.m01 = this.m01 + mat.m01;
         this.m02 = this.m02 + mat.m02;
@@ -623,7 +623,7 @@ export class Mat4 extends ValueType {
      * 计算矩阵减法。将当前矩阵减去指定矩阵的结果赋值给当前矩阵。
      * @param mat 减数矩阵。
      */
-    public subSelf (mat: Mat4) {
+    public subSelf (mat: Mat3) {
         this.m00 = this.m00 - mat.m00;
         this.m01 = this.m01 - mat.m01;
         this.m02 = this.m02 - mat.m02;
@@ -646,7 +646,7 @@ export class Mat4 extends ValueType {
      * 矩阵乘法。将当前矩阵左乘指定矩阵的结果赋值给当前矩阵。
      * @param mat 指定的矩阵。
      */
-    public mulSelf (mat: Mat4) {
+    public mulSelf (mat: Mat3) {
         const a00 = this.m00, a01 = this.m01, a02 = this.m02, a03 = this.m03,
             a10 = this.m04, a11 = this.m05, a12 = this.m06, a13 = this.m07,
             a20 = this.m08, a21 = this.m09, a22 = this.m10, a23 = this.m11,
@@ -822,23 +822,23 @@ export class Mat4 extends ValueType {
     }
 }
 
-CCClass.fastDefine('cc.Mat4', Mat4, {
+CCClass.fastDefine('cc.Mat3', Mat3, {
     m00: 1, m01: 0, m02: 0, m03: 0,
     m04: 0, m05: 1, m06: 0, m07: 0,
     m08: 0, m09: 0, m10: 1, m11: 0,
     m12: 0, m13: 0, m14: 0, m15: 1,
 });
-cc.Mat4 = Mat4;
+cc.Mat3 = Mat3;
 
 /**
- * 构造与指定矩阵相等的矩阵。等价于 `new Mat4(other)`。
+ * 构造与指定矩阵相等的矩阵。等价于 `new Mat3(other)`。
  * @param other 相比较的矩阵。
- * @returns `new Mat4(other)`
+ * @returns `new Mat3(other)`
  */
-export function mat4 (other: Mat4): Mat4;
+export function mat4 (other: Mat3): Mat3;
 
 /**
- * 构造具有指定元素的矩阵。等价于 `new Mat4(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)`
+ * 构造具有指定元素的矩阵。等价于 `new Mat3(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)`
  * @param m00 矩阵第 0 列第 0 行的元素。
  * @param m01 矩阵第 0 列第 1 行的元素。
  * @param m02 矩阵第 0 列第 2 行的元素。
@@ -855,20 +855,20 @@ export function mat4 (other: Mat4): Mat4;
  * @param m13 矩阵第 3 列第 1 行的元素。
  * @param m14 矩阵第 3 列第 2 行的元素。
  * @param m15 矩阵第 3 列第 3 行的元素。
- * @returns `new Mat4(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)`
+ * @returns `new Mat3(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)`
  */
 export function mat4 (
     m00?: number, m01?: number, m02?: number, m03?: number,
     m10?: number, m11?: number, m12?: number, m13?: number,
     m20?: number, m21?: number, m22?: number, m23?: number,
-    m30?: number, m31?: number, m32?: number, m33?: number): Mat4;
+    m30?: number, m31?: number, m32?: number, m33?: number): Mat3;
 
 export function mat4 (
-    m00: Mat4 | number = 1, m01 = 0, m02 = 0, m03 = 0,
+    m00: Mat3 | number = 1, m01 = 0, m02 = 0, m03 = 0,
     m10 = 0, m11 = 1, m12 = 0, m13 = 0,
     m20 = 0, m21 = 0, m22 = 1, m23 = 0,
     m30 = 0, m31 = 0, m32 = 0, m33 = 1) {
-    return new Mat4(m00 as any, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
+    return new Mat3(m00 as any, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
 }
 
 cc.mat4 = mat4;

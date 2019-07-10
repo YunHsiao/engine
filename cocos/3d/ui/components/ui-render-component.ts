@@ -37,7 +37,7 @@ import {
 import { constget } from '../../../core/data/utils/constget';
 import { SystemEventType } from '../../../core/platform';
 import { Color } from '../../../core/value-types';
-import { ccenum } from '../../../core/value-types/enum';
+import { CCEnum } from '../../../core/value-types/enum';
 import { GFXBlendFactor } from '../../../gfx/define';
 import { RenderData } from '../../../renderer/ui/renderData';
 import { UI } from '../../../renderer/ui/ui';
@@ -48,7 +48,7 @@ import { UIComponent } from './ui-component';
 import { UITransformComponent } from './ui-transfrom-component';
 
 // hack
-ccenum(GFXBlendFactor);
+CCEnum(GFXBlendFactor);
 
 /**
  * @zh

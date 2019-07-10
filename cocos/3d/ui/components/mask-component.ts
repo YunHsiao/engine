@@ -33,7 +33,7 @@ import { ccclass, executionOrder, menu, property} from '../../../core/data/class
 import { constget } from '../../../core/data/utils/constget';
 import { SystemEventType } from '../../../core/platform';
 import { Color, Mat4, Size, Vec2, Vec3 } from '../../../core/value-types';
-import { ccenum } from '../../../core/value-types/enum';
+import { CCEnum } from '../../../core/value-types/enum';
 import * as vmath from '../../../core/vmath';
 import { UI } from '../../../renderer/ui/ui';
 import { Node } from '../../../scene-graph';
@@ -78,7 +78,7 @@ export enum MaskType {
     // IMAGE_STENCIL = 2,
 }
 
-ccenum(MaskType);
+CCEnum(MaskType);
 
 const SEGEMENTS_MIN = 3;
 const SEGEMENTS_MAX = 10000;

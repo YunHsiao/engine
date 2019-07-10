@@ -36,7 +36,7 @@ import { constget } from '../../../core/data/utils/constget';
 import { EventMouse, EventTouch, SystemEventType } from '../../../core/platform';
 import { lerp } from '../../../core/utils';
 import { Color, Vec3 } from '../../../core/value-types';
-import { ccenum } from '../../../core/value-types/enum';
+import { CCEnum } from '../../../core/value-types/enum';
 import * as math from '../../../core/vmath';
 import { Node } from '../../../scene-graph/node';
 import { SpriteComponent } from './sprite-component';
@@ -71,7 +71,7 @@ enum Transition {
     SCALE = 3,
 }
 
-ccenum(Transition);
+CCEnum(Transition);
 
 enum State {
     NORMAL = 'normal',

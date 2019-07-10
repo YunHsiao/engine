@@ -30,12 +30,12 @@
 import CCClass from '../data/class';
 import { quat as xquat } from '../vmath/quat';
 import { ValueType } from './value-type';
-import Vec3 from './vec3';
+import { Vec3 } from './vec3';
 
 /**
  * 四元数。
  */
-export default class Quat extends ValueType {
+export class Quat extends ValueType {
 
     /**
      * 根据指定的插值比率，从当前四元数到目标四元数之间做插值。
