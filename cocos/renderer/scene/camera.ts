@@ -1,6 +1,6 @@
 import { frustum, ray } from '../../3d/geom-utils';
 import { Mat4, Rect, Vec3 } from '../../core/value-types';
-import { color4, lerp, mat4, toRadian, vec3 } from '../../core/vmath';
+import { color4, lerp, mat4, toRadian } from '../../core/vmath';
 import { GFXClearFlag, IGFXColor } from '../../gfx/define';
 import { RenderView } from '../../pipeline/render-view';
 import { Node } from '../../scene-graph/node';
@@ -487,16 +487,16 @@ export class Camera {
         const ch = this._viewport.height * this._height;
 
         // far plane intersection
-        vec3.set(v_a, (x - cx) / cw * 2 - 1, (y - cy) / ch * 2 - 1, 1);
-        vec3.transformMat4(v_a, v_a, this._matViewProjInv);
+        Vec3.set(v_a, (x - cx) / cw * 2 - 1, (y - cy) / ch * 2 - 1, 1);
+        Vec3.transformMat4(v_a, v_a, this._matViewProjInv);
 
         if (this._proj === CameraProjection.PERSPECTIVE) {
             // camera origin
             if (this._node) { this._node.getWorldPosition(v_b); }
         } else {
             // near plane intersection
-            vec3.set(v_b, (x - cx) / cw * 2 - 1, (y - cy) / ch * 2 - 1, -1);
-            vec3.transformMat4(v_b, v_b, this._matViewProjInv);
+            Vec3.set(v_b, (x - cx) / cw * 2 - 1, (y - cy) / ch * 2 - 1, -1);
+            Vec3.transformMat4(v_b, v_b, this._matViewProjInv);
         }
 
         return ray.fromPoints(out, v_b, v_a);
@@ -505,7 +505,7 @@ export class Camera {
     /**
      * transform a screen position to world space
      */
-    public screenToWorld (out: vec3, screenPos: vec3): vec3 {
+    public screenToWorld (out: Vec3, screenPos: Vec3): Vec3 {
         const cx = this._viewport.x * this._width;
         const cy = this._viewport.y * this._height;
         const cw = this._viewport.width * this._width;
@@ -513,28 +513,28 @@ export class Camera {
 
         if (this._proj === CameraProjection.PERSPECTIVE) {
             // calculate screen pos in far clip plane
-            vec3.set(out,
+            Vec3.set(out,
                 (screenPos.x - cx) / cw * 2 - 1,
                 (screenPos.y - cy) / ch * 2 - 1,
                 1.0,
             );
 
             // transform to world
-            vec3.transformMat4(out, out, this._matViewProjInv);
+            Vec3.transformMat4(out, out, this._matViewProjInv);
 
             // lerp to depth z
             if (this._node) { this._node.getWorldPosition(v_a); }
 
-            vec3.lerp(out, v_a, out, lerp(this._nearClip / this._farClip, 1, screenPos.z));
+            Vec3.lerp(out, v_a, out, lerp(this._nearClip / this._farClip, 1, screenPos.z));
         } else {
-            vec3.set(out,
+            Vec3.set(out,
                 (screenPos.x - cx) / cw * 2 - 1,
                 (screenPos.y - cy) / ch * 2 - 1,
                 screenPos.z * 2 - 1,
             );
 
             // transform to world
-            vec3.transformMat4(out, out, this.matViewProjInv);
+            Vec3.transformMat4(out, out, this.matViewProjInv);
         }
 
         return out;
@@ -543,13 +543,13 @@ export class Camera {
     /**
      * transform a world space position to screen space
      */
-    public worldToScreen (out: vec3, worldPos: vec3): vec3 {
+    public worldToScreen (out: Vec3, worldPos: Vec3): Vec3 {
         const cx = this._viewport.x * this._width;
         const cy = this._viewport.y * this._height;
         const cw = this._viewport.width * this._width;
         const ch = this._viewport.height * this._height;
 
-        vec3.transformMat4(out, worldPos, this.matViewProj);
+        Vec3.transformMat4(out, worldPos, this.matViewProj);
         out.x = cx + (out.x + 1) * 0.5 * cw;
         out.y = cy + (out.y + 1) * 0.5 * ch;
         out.z = out.z * 0.5 + 0.5;

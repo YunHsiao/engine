@@ -32,7 +32,7 @@ import { LCA } from '../../3d/misc/utils';
 import { Filter, PixelFormat, WrapMode } from '../../assets/asset-enum';
 import { Texture2D } from '../../assets/texture-2d';
 import { Mat4, Quat, Vec3 } from '../../core/value-types';
-import { mat4, quat, vec3 } from '../../core/vmath';
+import { mat4, quat } from '../../core/vmath';
 import { GFXBuffer } from '../../gfx/buffer';
 import { GFXBufferUsageBit, GFXFormatInfos, GFXMemoryUsageBit } from '../../gfx/define';
 import { GFXDevice, GFXFeature } from '../../gfx/device';
@@ -98,11 +98,11 @@ export class Joint {
         const parent = this.parent;
         if (parent) {
             parent.update();
-            vec3.multiply(this.position, this.node.position, parent.scale);
-            vec3.transformQuat(this.position, this.position, parent.rotation);
-            vec3.add(this.position, this.position, parent.position);
+            Vec3.multiply(this.position, this.node.position, parent.scale);
+            Vec3.transformQuat(this.position, this.position, parent.rotation);
+            Vec3.add(this.position, this.position, parent.position);
             quat.multiply(this.rotation, parent.rotation, this.node.rotation);
-            vec3.multiply(this.scale, parent.scale, this.node.scale);
+            Vec3.multiply(this.scale, parent.scale, this.node.scale);
         }
     }
 }
@@ -192,11 +192,11 @@ export class SkinningModel extends Model {
                 const cur = this._joints[i]; cur.update();
                 const bindpose = this._skeleton.bindTRS[i];
 
-                vec3.multiply(v3_1, bindpose.position, cur.scale);
-                vec3.transformQuat(v3_1, v3_1, cur.rotation);
-                vec3.add(v3_1, v3_1, cur.position);
+                Vec3.multiply(v3_1, bindpose.position, cur.scale);
+                Vec3.transformQuat(v3_1, v3_1, cur.rotation);
+                Vec3.add(v3_1, v3_1, cur.position);
                 quat.multiply(qt_2, cur.rotation, bindpose.rotation);
-                vec3.multiply(v3_2, cur.scale, bindpose.scale);
+                Vec3.multiply(v3_2, cur.scale, bindpose.scale);
 
                 this.updateJointData(i, v3_1, qt_2, v3_2);
             }

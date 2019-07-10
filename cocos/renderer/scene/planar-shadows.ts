@@ -1,7 +1,7 @@
 import { Material } from '../../3d/assets/material';
 import { CachedArray } from '../../core/memop/cached-array';
 import { Color, Mat4, Quat, Vec3 } from '../../core/value-types';
-import { color4, mat4, vec3 } from '../../core/vmath';
+import { color4, mat4 } from '../../core/vmath';
 import { GFXCommandBuffer } from '../../gfx/command-buffer';
 import { GFXCommandBufferType } from '../../gfx/define';
 import { GFXInputAssembler } from '../../gfx/input-assembler';
@@ -29,7 +29,7 @@ export class PlanarShadows {
     }
 
     set normal (val: Vec3) {
-        vec3.copy(this._normal, val);
+        Vec3.copy(this._normal, val);
         this.updateDirLight();
     }
     get normal () {
@@ -92,7 +92,7 @@ export class PlanarShadows {
     public updateSphereLight (light: SphereLight) {
         light.node.getWorldPosition(_v3);
         const n = this._normal, d = this._distance;
-        const NdL = vec3.dot(n, _v3);
+        const NdL = Vec3.dot(n, _v3);
         const lx = _v3.x, ly = _v3.y, lz = _v3.z;
         const nx = n.x, ny = n.y, nz = n.z;
         const m = this._matLight;
@@ -118,9 +118,9 @@ export class PlanarShadows {
 
     public updateDirLight (light: DirectionalLight = this._scene.mainLight) {
         light.node.getWorldRotation(_qt);
-        vec3.transformQuat(_v3, _forward, _qt);
+        Vec3.transformQuat(_v3, _forward, _qt);
         const n = this._normal, d = this._distance;
-        const NdL = vec3.dot(n, _v3), scale = 1 / NdL;
+        const NdL = Vec3.dot(n, _v3), scale = 1 / NdL;
         const lx = _v3.x * scale, ly = _v3.y * scale, lz = _v3.z * scale;
         const nx = n.x, ny = n.y, nz = n.z;
         const m = this._matLight;

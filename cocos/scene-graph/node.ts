@@ -35,7 +35,7 @@ import { eventManager } from '../core/platform/event-manager';
 import { SystemEventType } from '../core/platform/event-manager/event-enum';
 import { Mat4, Quat, Vec3 } from '../core/value-types';
 import { Size, Vec2 } from '../core/value-types';
-import { mat4, quat, vec3 } from '../core/vmath';
+import { mat4, quat } from '../core/vmath';
 import { BaseNode } from './base-node';
 import { Layers } from './layers';
 import { NodeEventProcessor } from './node-event-processor';
@@ -167,30 +167,30 @@ export class Node extends BaseNode {
             const local = this._lpos;
             if (parent) {
                 parent.updateWorldTransform();
-                vec3.subtract(local, this._pos, parent._pos);
-                vec3.transformQuat(local, local, quat.conjugate(q_a, parent._rot));
-                vec3.divide(local, local, parent._scale);
+                Vec3.subtract(local, this._pos, parent._pos);
+                Vec3.transformQuat(local, local, quat.conjugate(q_a, parent._rot));
+                Vec3.divide(local, local, parent._scale);
                 quat.multiply(this._lrot, quat.conjugate(q_a, parent._rot), this._rot);
-                vec3.divide(this._lscale, this._scale, parent._scale);
+                Vec3.divide(this._lscale, this._scale, parent._scale);
             } else {
-                vec3.copy(this._lpos, this._pos);
+                Vec3.copy(this._lpos, this._pos);
                 quat.copy(this._lrot, this._rot);
-                vec3.copy(this._lscale, this._scale);
+                Vec3.copy(this._lscale, this._scale);
             }
             this._eulerDirty = true;
         } else {
-            vec3.copy(this._pos, this._lpos);
+            Vec3.copy(this._pos, this._lpos);
             quat.copy(this._rot, this._lrot);
-            vec3.copy(this._scale, this._lscale);
+            Vec3.copy(this._scale, this._lscale);
         }
 
         this.invalidateChildren();
     }
 
     public _onBatchCreated () {
-        vec3.copy(this._pos, this._lpos);
+        Vec3.copy(this._pos, this._lpos);
         quat.copy(this._rot, this._lrot);
-        vec3.copy(this._scale, this._lscale);
+        Vec3.copy(this._scale, this._lscale);
         this._dirty = this._hasChanged = true;
         this._eventMask = 0;
         for (const child of this._children) {
@@ -219,13 +219,13 @@ export class Node extends BaseNode {
      */
     public translate (trans: Vec3, ns?: NodeSpace) {
         const space = ns || NodeSpace.LOCAL;
-        vec3.copy(v3_a, this._lpos);
+        Vec3.copy(v3_a, this._lpos);
         if (space === NodeSpace.LOCAL) {
-            vec3.transformQuat(v3_a, trans, this.worldRotation);
-            vec3.add(v3_a, this._lpos, v3_a);
+            Vec3.transformQuat(v3_a, trans, this.worldRotation);
+            Vec3.add(v3_a, this._lpos, v3_a);
             this.setPosition(v3_a);
         } else if (space === NodeSpace.WORLD) {
-            vec3.add(v3_a, this._lpos, trans);
+            Vec3.add(v3_a, this._lpos, trans);
             this.setPosition(v3_a);
         }
     }
@@ -253,11 +253,11 @@ export class Node extends BaseNode {
      */
     get forward (): Vec3 {
         this.getWorldRotation(q_a);
-        return vec3.transformQuat(new Vec3(), vec3.UNIT_Z, q_a);
+        return Vec3.transformQuat(new Vec3(), Vec3.UNIT_Z, q_a);
     }
     set forward (dir: Vec3) {
-        const len = vec3.magnitude(dir);
-        vec3.scale(v3_a, dir, -1 / len); // we use -z for view-dir
+        const len = Vec3.magnitude(dir);
+        Vec3.scale(v3_a, dir, -1 / len); // we use -z for view-dir
         quat.fromViewUp(q_a, v3_a);
         this.setWorldRotation(q_a);
     }
@@ -270,8 +270,8 @@ export class Node extends BaseNode {
      */
     public lookAt (pos: Vec3, up?: Vec3) {
         this.getWorldPosition(v3_a);
-        vec3.subtract(v3_a, v3_a, pos); // we use -z for view-dir
-        vec3.normalize(v3_a, v3_a);
+        Vec3.subtract(v3_a, v3_a, pos); // we use -z for view-dir
+        Vec3.normalize(v3_a, v3_a);
         quat.fromViewUp(q_a, v3_a, up);
         this.setWorldRotation(q_a);
     }
@@ -334,11 +334,11 @@ export class Node extends BaseNode {
         while (i) {
             child = array_a[--i];
             if (cur) {
-                vec3.multiply(child._pos, child._lpos, cur._scale);
-                vec3.transformQuat(child._pos, child._pos, cur._rot);
-                vec3.add(child._pos, child._pos, cur._pos);
+                Vec3.multiply(child._pos, child._lpos, cur._scale);
+                Vec3.transformQuat(child._pos, child._pos, cur._rot);
+                Vec3.add(child._pos, child._pos, cur._pos);
                 quat.multiply(child._rot, cur._rot, child._lrot);
-                vec3.multiply(child._scale, cur._scale, child._lscale);
+                Vec3.multiply(child._scale, cur._scale, child._lscale);
             }
             child._matDirty = true; // further deferred eval
             child._dirty = false;
@@ -381,11 +381,11 @@ export class Node extends BaseNode {
     public setPosition (val: Vec3 | number, y?: number, z?: number) {
         v3_a.set(this._lpos);
         if (y === undefined || z === undefined) {
-            vec3.copy(this._lpos, val as Vec3);
+            Vec3.copy(this._lpos, val as Vec3);
         } else if (arguments.length === 3) {
-            vec3.set(this._lpos, val as number, y, z);
+            Vec3.set(this._lpos, val as number, y, z);
         }
-        vec3.copy(this._pos, this._lpos);
+        Vec3.copy(this._pos, this._lpos);
 
         this.invalidateChildren();
         if (this._eventMask & TRANFORM_ON) {
@@ -400,9 +400,9 @@ export class Node extends BaseNode {
      */
     public getPosition (out?: Vec3): Vec3 {
         if (out) {
-            return vec3.set(out, this._lpos.x, this._lpos.y, this._lpos.z);
+            return Vec3.set(out, this._lpos.x, this._lpos.y, this._lpos.z);
         } else {
-            return vec3.copy(new Vec3(), this._lpos);
+            return Vec3.copy(new Vec3(), this._lpos);
         }
     }
 
@@ -458,7 +458,7 @@ export class Node extends BaseNode {
      * @param z - 目标欧拉角的 Z 分量
      */
     public setRotationFromEuler (x: number, y: number, z: number) {
-        vec3.set(this._euler, x, y, z);
+        Vec3.set(this._euler, x, y, z);
         this._eulerDirty = false;
         quat.fromEuler(this._lrot, x, y, z);
         quat.copy(this._rot, this._lrot);
@@ -512,11 +512,11 @@ export class Node extends BaseNode {
 
     public setScale (val: Vec3 | number, y?: number, z?: number) {
         if (y === undefined || z === undefined) {
-            vec3.copy(this._lscale, val as Vec3);
+            Vec3.copy(this._lscale, val as Vec3);
         } else if (arguments.length === 3) {
-            vec3.set(this._lscale, val as number, y, z);
+            Vec3.set(this._lscale, val as number, y, z);
         }
-        vec3.copy(this._scale, this._lscale);
+        Vec3.copy(this._scale, this._lscale);
 
         this.invalidateChildren();
         if (this._eventMask & TRANFORM_ON) {
@@ -531,9 +531,9 @@ export class Node extends BaseNode {
      */
     public getScale (out?: Vec3): Vec3 {
         if (out) {
-            return vec3.set(out, this._lscale.x, this._lscale.y, this._lscale.z);
+            return Vec3.set(out, this._lscale.x, this._lscale.y, this._lscale.z);
         } else {
-            return vec3.copy(new Vec3(), this._lscale);
+            return Vec3.copy(new Vec3(), this._lscale);
         }
     }
 
@@ -568,20 +568,20 @@ export class Node extends BaseNode {
 
     public setWorldPosition (val: Vec3 | number, y?: number, z?: number) {
         if (y === undefined || z === undefined) {
-            vec3.copy(this._pos, val as Vec3);
+            Vec3.copy(this._pos, val as Vec3);
         } else if (arguments.length === 3) {
-            vec3.set(this._pos, val as number, y, z);
+            Vec3.set(this._pos, val as number, y, z);
         }
         const parent = this._parent;
         const local = this._lpos;
         v3_a.set(this._lpos);
         if (parent) {
             parent.updateWorldTransform();
-            vec3.subtract(local, this._pos, parent._pos);
-            vec3.transformQuat(local, local, quat.conjugate(q_a, parent._rot));
-            vec3.divide(local, local, parent._scale);
+            Vec3.subtract(local, this._pos, parent._pos);
+            Vec3.transformQuat(local, local, quat.conjugate(q_a, parent._rot));
+            Vec3.divide(local, local, parent._scale);
         } else {
-            vec3.copy(local, this._pos);
+            Vec3.copy(local, this._pos);
         }
 
         this.invalidateChildren();
@@ -598,9 +598,9 @@ export class Node extends BaseNode {
     public getWorldPosition (out?: Vec3): Vec3 {
         this.updateWorldTransform();
         if (out) {
-            return vec3.copy(out, this._pos);
+            return Vec3.copy(out, this._pos);
         } else {
-            return vec3.copy(new Vec3(), this._pos);
+            return Vec3.copy(new Vec3(), this._pos);
         }
     }
 
@@ -722,15 +722,15 @@ export class Node extends BaseNode {
 
     public setWorldScale (val: Vec3 | number, y?: number, z?: number) {
         if (y === undefined || z === undefined) {
-            vec3.copy(this._scale, val as Vec3);
+            Vec3.copy(this._scale, val as Vec3);
         } else if (arguments.length === 3) {
-            vec3.set(this._scale, val as number, y, z);
+            Vec3.set(this._scale, val as number, y, z);
         }
         if (this._parent) {
             this._parent.getWorldScale(v3_a);
-            vec3.divide(this._lscale, this._scale, v3_a);
+            Vec3.divide(this._lscale, this._scale, v3_a);
         } else {
-            vec3.copy(this._lscale, this._scale);
+            Vec3.copy(this._lscale, this._scale);
         }
 
         this.invalidateChildren();
@@ -747,9 +747,9 @@ export class Node extends BaseNode {
     public getWorldScale (out?: Vec3): Vec3 {
         this.updateWorldTransform();
         if (out) {
-            return vec3.copy(out, this._scale);
+            return Vec3.copy(out, this._scale);
         } else {
-            return vec3.copy(new Vec3(), this._scale);
+            return Vec3.copy(new Vec3(), this._scale);
         }
     }
 

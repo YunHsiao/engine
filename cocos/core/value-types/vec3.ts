@@ -546,13 +546,6 @@ export class Vec3 extends ValueType {
     }
 
     /**
-     * @zh 返回向量的字符串表示
-     */
-    public static str (a: Vec3) {
-        return `Vec3(${a.x}, ${a.y}, ${a.z})`;
-    }
-
-    /**
      * @zh 向量转数组
      * @param ofs 数组起始偏移量
      */
@@ -668,29 +661,22 @@ export class Vec3 extends ValueType {
     }
 
     /**
+     * 判断当前向量是否在误差范围内与指定向量相等。
+     * @param other 相比较的向量。
+     * @param epsilon 允许的误差，应为非负数。
+     * @returns 当两向量的各分量都在指定的误差范围内分别相等时，返回 `true`；否则返回 `false`。
+     */
+    public equals (other: Vec3, epsilon?: number) {
+        return Vec3.equals(this, other, epsilon);
+    }
+
+    /**
      * 判断当前向量是否与指定向量相等。
      * @param other 相比较的向量。
      * @returns 两向量的各分量都分别相等时返回 `true`；否则返回 `false`。
      */
-    public equals (other: Vec3) {
+    public exactEquals (other: Vec3) {
         return this.x === other.x && this.y === other.y && this.z === other.z;
-    }
-
-    /**
-     * 判断当前向量是否在误差范围 [-variance, variance] 内与指定向量相等。
-     * @param other 相比较的向量。
-     * @param variance 允许的误差，应为非负数。
-     * @returns 当两向量的各分量都在指定的误差范围内分别相等时，返回 `true`；否则返回 `false`。
-     */
-    public fuzzyEquals (other: Vec3, variance: number) {
-        if (this.x - variance <= other.x && other.x <= this.x + variance) {
-            if (this.y - variance <= other.y && other.y <= this.y + variance) {
-                if (this.z - variance <= other.z && other.z <= this.z + variance) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**

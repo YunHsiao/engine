@@ -1,6 +1,6 @@
 import { aabb, frustum } from '../../3d/geom-utils';
 import { Mat4, Quat, Vec3 } from '../../core/value-types';
-import { mat4, vec3 } from '../../core/vmath';
+import { mat4 } from '../../core/vmath';
 import { Node } from '../../scene-graph/node';
 import { Light, LightType, nt2lm } from './light';
 import { RenderScene } from './render-scene';
@@ -84,8 +84,8 @@ export class SpotLight extends Light {
     public update () {
         if (this._node) {
             this._node.getWorldPosition(this._pos);
-            this._dir = vec3.transformQuat(_v3, _forward, this._node.getWorldRotation(_qt));
-            vec3.normalize(this._dir, this._dir);
+            this._dir = Vec3.transformQuat(_v3, _forward, this._node.getWorldRotation(_qt));
+            Vec3.normalize(this._dir, this._dir);
             aabb.set(this._aabb, this._pos.x, this._pos.y, this._pos.z, this._range, this._range, this._range);
 
             // view matrix
