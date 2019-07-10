@@ -47,7 +47,7 @@ export class Vec4 extends ValueType {
      * 构造与指定向量相等的向量。
      * @param other 相比较的向量。
      */
-    public static create (other?: Vec4): Vec4;
+    public static create (other: Vec4): Vec4;
 
     /**
      * 构造具有指定分量的向量。
@@ -529,7 +529,7 @@ export class Vec4 extends ValueType {
     /**
      * 判断当前向量是否在误差范围内与指定向量相等。
      * @param other 相比较的向量。
-     * @param epsilon? 允许的误差，应为非负数。
+     * @param epsilon 允许的误差，应为非负数。
      * @returns 当两向量的各分量都在指定的误差范围内分别相等时，返回 `true`；否则返回 `false`。
      */
     public equals (other: Vec4, epsilon?: number) {

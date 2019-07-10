@@ -44,7 +44,7 @@ export class Mat4 extends ValueType {
     /**
      * 构造与指定矩阵相等的矩阵，或如果不指定的话，单位矩阵。
      */
-    public static create (other?: Mat4): Mat4;
+    public static create (other: Mat4): Mat4;
 
     /**
      * 构造具有指定元素的矩阵。

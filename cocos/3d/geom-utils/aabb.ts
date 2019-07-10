@@ -2,8 +2,8 @@
  * @category gemotry-utils
  */
 
-import { Mat4, Vec3 } from '../../core/value-types';
-import { mat3, quat } from '../../core/vmath';
+import { Mat4, Quat, Vec3 } from '../../core/value-types';
+import { mat3 } from '../../core/vmath';
 import enums from './enums';
 
 const _v3_tmp = Vec3.create();
@@ -192,7 +192,7 @@ export default class aabb {
      * @param scale 变换的缩放部分。
      * @param out 变换的目标。
      */
-    public transform (m: Mat4, pos: Vec3 | null, rot: quat | null, scale: Vec3 | null, out: aabb) {
+    public transform (m: Mat4, pos: Vec3 | null, rot: Quat | null, scale: Vec3 | null, out: aabb) {
         Vec3.transformMat4(out.center, this.center, m);
         transform_extent_m4(out.halfExtents, this.halfExtents, m);
     }

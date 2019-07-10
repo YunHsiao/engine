@@ -32,7 +32,6 @@ import { LCA } from '../../3d/misc/utils';
 import { Filter, PixelFormat, WrapMode } from '../../assets/asset-enum';
 import { Texture2D } from '../../assets/texture-2d';
 import { Mat4, Quat, Vec3 } from '../../core/value-types';
-import { mat4, quat } from '../../core/vmath';
 import { GFXBuffer } from '../../gfx/buffer';
 import { GFXBufferUsageBit, GFXFormatInfos, GFXMemoryUsageBit } from '../../gfx/define';
 import { GFXDevice, GFXFeature } from '../../gfx/device';
@@ -101,7 +100,7 @@ export class Joint {
             Vec3.multiply(this.position, this.node.position, parent.scale);
             Vec3.transformQuat(this.position, this.position, parent.rotation);
             Vec3.add(this.position, this.position, parent.position);
-            quat.multiply(this.rotation, parent.rotation, this.node.rotation);
+            Quat.multiply(this.rotation, parent.rotation, this.node.rotation);
             Vec3.multiply(this.scale, parent.scale, this.node.scale);
         }
     }
@@ -195,7 +194,7 @@ export class SkinningModel extends Model {
                 Vec3.multiply(v3_1, bindpose.position, cur.scale);
                 Vec3.transformQuat(v3_1, v3_1, cur.rotation);
                 Vec3.add(v3_1, v3_1, cur.position);
-                quat.multiply(qt_2, cur.rotation, bindpose.rotation);
+                Quat.multiply(qt_2, cur.rotation, bindpose.rotation);
                 Vec3.multiply(v3_2, cur.scale, bindpose.scale);
 
                 this.updateJointData(i, v3_1, qt_2, v3_2);
@@ -232,7 +231,7 @@ export class SkinningModel extends Model {
         if (!this._jointsMedium) { return; }
         const out = this._jointsMedium.nativeData;
         const base = 12 * idx;
-        mat4.fromRTS(m4_1, rot, pos, scale);
+        Mat4.fromRTS(m4_1, rot, pos, scale);
         out[base + 0] = m4_1.m00;
         out[base + 1] = m4_1.m01;
         out[base + 2] = m4_1.m02;
@@ -253,11 +252,11 @@ export class SkinningModel extends Model {
         const out = this._jointsMedium.nativeData;
         const base = 12 * idx;
         // sign consistency
-        if (idx === 0) { quat.copy(qt_0, rot); }
-        else if (quat.dot(qt_0, rot) < 0) { quat.scale(rot, rot, -1); }
+        if (idx === 0) { Quat.copy(qt_0, rot); }
+        else if (Quat.dot(qt_0, rot) < 0) { Quat.scale(rot, rot, -1); }
         // conversion
-        quat.set(qt_1, pos.x, pos.y, pos.z, 0);
-        quat.scale(qt_1, quat.multiply(qt_1, qt_1, rot), 0.5);
+        Quat.set(qt_1, pos.x, pos.y, pos.z, 0);
+        Quat.scale(qt_1, Quat.multiply(qt_1, qt_1, rot), 0.5);
         // upload
         out[base + 0] = rot.x;
         out[base + 1] = rot.y;

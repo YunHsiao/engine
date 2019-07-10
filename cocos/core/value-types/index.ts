@@ -39,3 +39,4 @@ export { AffineTransform } from './affine-transform';
 export { Size } from './size';
 export { Rect } from './rect';
 export { Color } from './color';
+// export * from './utils';

@@ -50,7 +50,7 @@ export class Vec3 extends ValueType {
     /**
      * 构造与指定向量相等的向量，或如果不指定的话，零向量。
      */
-    public static create (v?: Vec3): Vec3;
+    public static create (v: Vec3): Vec3;
 
     /**
      * 构造具有指定分量的向量。

@@ -35,7 +35,6 @@ import { eventManager } from '../core/platform/event-manager';
 import { SystemEventType } from '../core/platform/event-manager/event-enum';
 import { Mat4, Quat, Vec3 } from '../core/value-types';
 import { Size, Vec2 } from '../core/value-types';
-import { quat } from '../core/vmath';
 import { BaseNode } from './base-node';
 import { Layers } from './layers';
 import { NodeEventProcessor } from './node-event-processor';
@@ -119,7 +118,7 @@ export class Node extends BaseNode {
     }
     get eulerAngles () {
         if (this._eulerDirty) {
-            quat.toEuler(this._euler, this._lrot);
+            Quat.toEuler(this._euler, this._lrot);
             this._eulerDirty = false;
         }
         return this._euler;
@@ -168,19 +167,19 @@ export class Node extends BaseNode {
             if (parent) {
                 parent.updateWorldTransform();
                 Vec3.subtract(local, this._pos, parent._pos);
-                Vec3.transformQuat(local, local, quat.conjugate(q_a, parent._rot));
+                Vec3.transformQuat(local, local, Quat.conjugate(q_a, parent._rot));
                 Vec3.divide(local, local, parent._scale);
-                quat.multiply(this._lrot, quat.conjugate(q_a, parent._rot), this._rot);
+                Quat.multiply(this._lrot, Quat.conjugate(q_a, parent._rot), this._rot);
                 Vec3.divide(this._lscale, this._scale, parent._scale);
             } else {
                 Vec3.copy(this._lpos, this._pos);
-                quat.copy(this._lrot, this._rot);
+                Quat.copy(this._lrot, this._rot);
                 Vec3.copy(this._lscale, this._scale);
             }
             this._eulerDirty = true;
         } else {
             Vec3.copy(this._pos, this._lpos);
-            quat.copy(this._rot, this._lrot);
+            Quat.copy(this._rot, this._lrot);
             Vec3.copy(this._scale, this._lscale);
         }
 
@@ -189,7 +188,7 @@ export class Node extends BaseNode {
 
     public _onBatchCreated () {
         Vec3.copy(this._pos, this._lpos);
-        quat.copy(this._rot, this._lrot);
+        Quat.copy(this._rot, this._lrot);
         Vec3.copy(this._scale, this._lscale);
         this._dirty = this._hasChanged = true;
         this._eventMask = 0;
@@ -240,10 +239,10 @@ export class Node extends BaseNode {
         const space = ns || NodeSpace.LOCAL;
         if (space === NodeSpace.LOCAL) {
             this.getRotation(q_a);
-            this.setRotation(quat.multiply(q_a, q_a, rot));
+            this.setRotation(Quat.multiply(q_a, q_a, rot));
         } else if (space === NodeSpace.WORLD) {
             this.getWorldRotation(q_a);
-            this.setWorldRotation(quat.multiply(q_a, rot, q_a));
+            this.setWorldRotation(Quat.multiply(q_a, rot, q_a));
         }
     }
 
@@ -258,7 +257,7 @@ export class Node extends BaseNode {
     set forward (dir: Vec3) {
         const len = Vec3.magnitude(dir);
         Vec3.scale(v3_a, dir, -1 / len); // we use -z for view-dir
-        quat.fromViewUp(q_a, v3_a);
+        Quat.fromViewUp(q_a, v3_a);
         this.setWorldRotation(q_a);
     }
 
@@ -272,7 +271,7 @@ export class Node extends BaseNode {
         this.getWorldPosition(v3_a);
         Vec3.subtract(v3_a, v3_a, pos); // we use -z for view-dir
         Vec3.normalize(v3_a, v3_a);
-        quat.fromViewUp(q_a, v3_a, up);
+        Quat.fromViewUp(q_a, v3_a, up);
         this.setWorldRotation(q_a);
     }
 
@@ -337,7 +336,7 @@ export class Node extends BaseNode {
                 Vec3.multiply(child._pos, child._lpos, cur._scale);
                 Vec3.transformQuat(child._pos, child._pos, cur._rot);
                 Vec3.add(child._pos, child._pos, cur._pos);
-                quat.multiply(child._rot, cur._rot, child._lrot);
+                Quat.multiply(child._rot, cur._rot, child._lrot);
                 Vec3.multiply(child._scale, cur._scale, child._lscale);
             }
             child._matDirty = true; // further deferred eval
@@ -437,11 +436,11 @@ export class Node extends BaseNode {
 
     public setRotation (val: Quat | number, y?: number, z?: number, w?: number) {
         if (y === undefined || z === undefined || w === undefined) {
-            quat.copy(this._lrot, val as Quat);
+            Quat.copy(this._lrot, val as Quat);
         } else if (arguments.length === 4) {
-            quat.set(this._lrot, val as number, y, z, w);
+            Quat.set(this._lrot, val as number, y, z, w);
         }
-        quat.copy(this._rot, this._lrot);
+        Quat.copy(this._rot, this._lrot);
         this._eulerDirty = true;
 
         this.invalidateChildren();
@@ -460,8 +459,8 @@ export class Node extends BaseNode {
     public setRotationFromEuler (x: number, y: number, z: number) {
         Vec3.set(this._euler, x, y, z);
         this._eulerDirty = false;
-        quat.fromEuler(this._lrot, x, y, z);
-        quat.copy(this._rot, this._lrot);
+        Quat.fromEuler(this._lrot, x, y, z);
+        Quat.copy(this._rot, this._lrot);
 
         this.invalidateChildren();
         if (this._eventMask & TRANFORM_ON) {
@@ -476,9 +475,9 @@ export class Node extends BaseNode {
      */
     public getRotation (out?: Quat): Quat {
         if (out) {
-            return quat.set(out, this._lrot.x, this._lrot.y, this._lrot.z, this._lrot.w);
+            return Quat.set(out, this._lrot.x, this._lrot.y, this._lrot.z, this._lrot.w);
         } else {
-            return quat.copy(new Quat(), this._lrot);
+            return Quat.copy(new Quat(), this._lrot);
         }
     }
 
@@ -578,7 +577,7 @@ export class Node extends BaseNode {
         if (parent) {
             parent.updateWorldTransform();
             Vec3.subtract(local, this._pos, parent._pos);
-            Vec3.transformQuat(local, local, quat.conjugate(q_a, parent._rot));
+            Vec3.transformQuat(local, local, Quat.conjugate(q_a, parent._rot));
             Vec3.divide(local, local, parent._scale);
         } else {
             Vec3.copy(local, this._pos);
@@ -636,15 +635,15 @@ export class Node extends BaseNode {
 
     public setWorldRotation (val: Quat | number, y?: number, z?: number, w?: number) {
         if (y === undefined || z === undefined || w === undefined) {
-            quat.copy(this._rot, val as Quat);
+            Quat.copy(this._rot, val as Quat);
         } else if (arguments.length === 4) {
-            quat.set(this._rot, val as number, y, z, w);
+            Quat.set(this._rot, val as number, y, z, w);
         }
         if (this._parent) {
             this._parent.getWorldRotation(q_a);
-            quat.multiply(this._lrot, quat.conjugate(q_a, q_a), this._rot);
+            Quat.multiply(this._lrot, Quat.conjugate(q_a, q_a), this._rot);
         } else {
-            quat.copy(this._lrot, this._rot);
+            Quat.copy(this._lrot, this._rot);
         }
         this._eulerDirty = true;
 
@@ -662,12 +661,12 @@ export class Node extends BaseNode {
      * @param z - 目标欧拉角的 Z 分量
      */
     public setWorldRotationFromEuler (x: number, y: number, z: number) {
-        quat.fromEuler(this._rot, x, y, z);
+        Quat.fromEuler(this._rot, x, y, z);
         if (this._parent) {
             this._parent.getWorldRotation(q_a);
-            quat.multiply(this._lrot, this._rot, quat.conjugate(q_a, q_a));
+            Quat.multiply(this._lrot, this._rot, Quat.conjugate(q_a, q_a));
         } else {
-            quat.copy(this._lrot, this._rot);
+            Quat.copy(this._lrot, this._rot);
         }
         this._eulerDirty = true;
 
@@ -685,9 +684,9 @@ export class Node extends BaseNode {
     public getWorldRotation (out?: Quat): Quat {
         this.updateWorldTransform();
         if (out) {
-            return quat.copy(out, this._rot);
+            return Quat.copy(out, this._rot);
         } else {
-            return quat.copy(new Quat(), this._rot);
+            return Quat.copy(new Quat(), this._rot);
         }
     }
 
