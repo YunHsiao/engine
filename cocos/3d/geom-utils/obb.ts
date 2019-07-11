@@ -2,16 +2,15 @@
  * @category gemotry-utils
  */
 
-import { Mat4, Quat, Vec3 } from '../../core/value-types';
-import { mat3 } from '../../core/vmath';
+import { Mat3, Mat4, Quat, Vec3 } from '../../core/value-types';
 import enums from './enums';
 
 const _v3_tmp = Vec3.create();
 const _v3_tmp2 = Vec3.create();
-const _m3_tmp = mat3.create();
+const _m3_tmp = Mat3.create();
 
 // https://zeuxcg.org/2010/10/17/aabb-from-obb-with-component-wise-abs/
-const transform_extent_m3 = (out: Vec3, extent: Vec3, m3: mat3) => {
+const transform_extent_m3 = (out: Vec3, extent: Vec3, m3: Mat3) => {
     _m3_tmp.m00 = Math.abs(m3.m00); _m3_tmp.m01 = Math.abs(m3.m01); _m3_tmp.m02 = Math.abs(m3.m02);
     _m3_tmp.m03 = Math.abs(m3.m03); _m3_tmp.m04 = Math.abs(m3.m04); _m3_tmp.m05 = Math.abs(m3.m05);
     _m3_tmp.m06 = Math.abs(m3.m06); _m3_tmp.m07 = Math.abs(m3.m07); _m3_tmp.m08 = Math.abs(m3.m08);
@@ -92,7 +91,7 @@ export default class obb {
     public static copy (out: obb, a: obb): obb {
         Vec3.copy(out.center, a.center);
         Vec3.copy(out.halfExtents, a.halfExtents);
-        mat3.copy(out.orientation, a.orientation);
+        Mat3.copy(out.orientation, a.orientation);
 
         return out;
     }
@@ -110,7 +109,7 @@ export default class obb {
     public static fromPoints (out: obb, minPos: Vec3, maxPos: Vec3): obb {
         Vec3.scale(out.center, Vec3.add(_v3_tmp, minPos, maxPos), 0.5);
         Vec3.scale(out.halfExtents, Vec3.subtract(_v3_tmp2, maxPos, minPos), 0.5);
-        mat3.identity(out.orientation);
+        Mat3.identity(out.orientation);
         return out;
     }
 
@@ -145,7 +144,7 @@ export default class obb {
         oz_1: number, oz_2: number, oz_3: number): obb {
         Vec3.set(out.center, cx, cy, cz);
         Vec3.set(out.halfExtents, hw, hh, hl);
-        mat3.set(out.orientation, ox_1, ox_2, ox_3, oy_1, oy_2, oy_3, oz_1, oz_2, oz_3);
+        Mat3.set(out.orientation, ox_1, ox_2, ox_3, oy_1, oy_2, oy_3, oz_1, oz_2, oz_3);
         return out;
     }
 
@@ -165,7 +164,7 @@ export default class obb {
      * @zh
      * 方向矩阵。
      */
-    public orientation: mat3;
+    public orientation: Mat3;
 
     protected _type: number;
 
@@ -177,7 +176,7 @@ export default class obb {
         this._type = enums.SHAPE_OBB;
         this.center = Vec3.create(cx, cy, cz);
         this.halfExtents = Vec3.create(hw, hh, hl);
-        this.orientation = mat3.create(ox_1, ox_2, ox_3, oy_1, oy_2, oy_3, oz_1, oz_2, oz_3);
+        this.orientation = Mat3.create(ox_1, ox_2, ox_3, oy_1, oy_2, oy_3, oz_1, oz_2, oz_3);
     }
 
     /**
@@ -207,7 +206,7 @@ export default class obb {
     public transform (m: Mat4, pos: Vec3, rot: Quat, scale: Vec3, out: obb) {
         Vec3.transformMat4(out.center, this.center, m);
         // parent shape doesn't contain rotations for now
-        mat3.fromQuat(out.orientation, rot);
+        Mat3.fromQuat(out.orientation, rot);
         Vec3.multiply(out.halfExtents, this.halfExtents, scale);
     }
 
@@ -221,7 +220,7 @@ export default class obb {
     public translateAndRotate (m: Mat4, rot: Quat, out: obb){
         Vec3.transformMat4(out.center, this.center, m);
         // parent shape doesn't contain rotations for now
-        mat3.fromQuat(out.orientation, rot);
+        Mat3.fromQuat(out.orientation, rot);
     }
 
     /**

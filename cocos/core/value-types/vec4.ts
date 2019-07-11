@@ -29,8 +29,8 @@
  */
 
 import CCClass from '../data/class';
-import { quat } from '../vmath';
-import { Mat4 } from './Mat4';
+import { Mat4 } from './mat4';
+import { Quat } from './quat';
 import { clamp, EPSILON, random } from './utils';
 import { ValueType } from './value-type';
 
@@ -429,7 +429,7 @@ export class Vec4 extends ValueType {
     /**
      * @zh 向量四元数乘法
      */
-    public static transformQuat (out: Vec4, a: Vec4, q: quat) {
+    public static transformQuat (out: Vec4, a: Vec4, q: Quat) {
         const { x, y, z } = a;
         const { x: qx, y: qy, z: qz, w: qw } = q;
 

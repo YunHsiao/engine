@@ -2,15 +2,14 @@
  * @category gemotry-utils
  */
 
-import { Mat4, Quat, Vec3 } from '../../core/value-types';
-import { mat3 } from '../../core/vmath';
+import { Mat3, Mat4, Quat, Vec3 } from '../../core/value-types';
 import enums from './enums';
 
 const _v3_tmp = Vec3.create();
 const _v3_tmp2 = Vec3.create();
 const _v3_tmp3 = Vec3.create();
 const _v3_tmp4 = Vec3.create();
-const _m3_tmp = mat3.create();
+const _m3_tmp = Mat3.create();
 
 // https://zeuxcg.org/2010/10/17/aabb-from-obb-with-component-wise-abs/
 const transform_extent_m4 = (out: Vec3, extent: Vec3, m4: Mat4) => {

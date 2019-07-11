@@ -32,7 +32,7 @@ import { SpriteFrame } from '../../../assets';
 import { ccclass, executionOrder, menu, property} from '../../../core/data/class-decorator';
 import { constget } from '../../../core/data/utils/constget';
 import { SystemEventType } from '../../../core/platform';
-import { Color, Mat4, Size, Vec2, Vec3 } from '../../../core/value-types';
+import { clamp, Color, Mat4, Size, Vec2, Vec3 } from '../../../core/value-types';
 import { CCEnum } from '../../../core/value-types/enum';
 import * as vmath from '../../../core/vmath';
 import { UI } from '../../../renderer/ui/ui';
@@ -188,7 +188,7 @@ export class MaskComponent extends UIRenderComponent {
     }
 
     set segments (value) {
-        this._segments = vmath.clamp(value, SEGEMENTS_MIN, SEGEMENTS_MAX);
+        this._segments = clamp(value, SEGEMENTS_MIN, SEGEMENTS_MAX);
         this._updateGraphics();
     }
 

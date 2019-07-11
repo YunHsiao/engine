@@ -2,8 +2,7 @@
  * @category gemotry-utils
  */
 
-import { Mat4, Vec3 } from '../../core/value-types';
-import { quat } from '../../core/vmath';
+import { Mat4, Quat, Vec3 } from '../../core/value-types';
 import enums from './enums';
 
 const _v3_tmp = Vec3.create();
@@ -163,7 +162,7 @@ export default class sphere {
      * @param scale 变换的缩放部分。
      * @param out 变换的目标。
      */
-    public transform (m: Mat4, pos: Vec3, rot: quat, scale: Vec3, out: sphere) {
+    public transform (m: Mat4, pos: Vec3, rot: Quat, scale: Vec3, out: sphere) {
         Vec3.transformMat4(out.center, this.center, m);
         out.radius = this.radius * maxComponent(scale);
     }
@@ -175,7 +174,7 @@ export default class sphere {
      * @param rot 变换的旋转部分。
      * @param out 变换的目标。
      */
-    public translateAndRotate (m: Mat4, rot: quat, out: sphere){
+    public translateAndRotate (m: Mat4, rot: Quat, out: sphere){
         Vec3.transformMat4(out.center, this.center, m);
     }
 

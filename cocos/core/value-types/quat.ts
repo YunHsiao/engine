@@ -28,7 +28,7 @@
  */
 
 import CCClass from '../data/class';
-import { mat3 } from '../vmath';
+import { Mat3 } from './Mat3';
 import { EPSILON, toDegree } from './utils';
 import { ValueType } from './value-type';
 import { Vec3 } from './vec3';
@@ -59,7 +59,7 @@ export class Quat extends ValueType {
      * @zh 创建新的实例
      */
     public static create (x?: number | Quat, y?: number, z?: number, w?: number) {
-        if (x && typeof x === 'object') {
+        if (typeof x === 'object') {
             return new Quat(x.x, x.y, x.z, x.w);
         } else {
             return new Quat(x, y, z, w);
@@ -445,7 +445,7 @@ export class Quat extends ValueType {
      * @zh 根据本地坐标轴朝向计算四元数，默认三向量都已归一化且相互垂直
      */
     public static fromAxes (out: Quat, xAxis: Vec3, yAxis: Vec3, zAxis: Vec3) {
-        mat3.set(m3_1,
+        Mat3.set(m3_1,
             xAxis.x, xAxis.y, xAxis.z,
             yAxis.x, yAxis.y, yAxis.z,
             zAxis.x, zAxis.y, zAxis.z,
@@ -459,7 +459,7 @@ export class Quat extends ValueType {
      * @param up 视口的上方向，必须归一化，默认为 (0, 1, 0)
      */
     public static fromViewUp (out: Quat, view: Vec3, up?: Vec3) {
-        mat3.fromViewUp(m3_1, view, up);
+        Mat3.fromViewUp(m3_1, view, up);
         return Quat.normalize(out, Quat.fromMat3(out, m3_1));
     }
 
@@ -479,7 +479,7 @@ export class Quat extends ValueType {
     /**
      * @zh 根据三维矩阵信息计算四元数，默认输入矩阵不含有缩放信息
      */
-    public static fromMat3 (out: Quat, m: mat3) {
+    public static fromMat3 (out: Quat, m: Mat3) {
         const {
             m00: m00, m03: m01, m06: m02,
             m01: m10, m04: m11, m07: m12,
@@ -738,7 +738,7 @@ export class Quat extends ValueType {
 const qt_1 = Quat.create();
 const qt_2 = Quat.create();
 const v3_1 = Vec3.create();
-const m3_1 = mat3.create();
+const m3_1 = Mat3.create();
 const halfToRad = 0.5 * Math.PI / 180.0;
 
 CCClass.fastDefine('cc.Quat', Quat, { x: 0, y: 0, z: 0, w: 1 });

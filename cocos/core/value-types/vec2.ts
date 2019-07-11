@@ -29,8 +29,8 @@
  */
 
 import CCClass from '../data/class';
-import { clamp, vec2 } from '../vmath';
 import { Mat4 } from './mat4';
+import { clamp } from './utils';
 import { ValueType } from './value-type';
 
 /**

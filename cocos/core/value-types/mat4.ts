@@ -28,9 +28,8 @@
  */
 
 import CCClass from '../data/class';
-import { mat3, quat } from '../vmath';
-import { Mat3 } from './mat3';
-import { Quat } from './quat';
+import { Mat3 } from './Mat3';
+import { Quat } from './Quat';
 import { EPSILON } from './utils';
 import { ValueType } from './value-type';
 import { Vec3 } from './vec3';
@@ -768,7 +767,7 @@ export class Mat4 extends ValueType {
         out.y = Math.sqrt(m04 * m04 + m05 * m05 + m06 * m06);
         out.z = Math.sqrt(m08 * m08 + m09 * m09 + m10 * m10);
         // account for refections
-        if (mat3.determinant(m3_1) < 0) { out.x *= -1; }
+        if (Mat3.determinant(m3_1) < 0) { out.x *= -1; }
         return out;
     }
 
@@ -824,9 +823,9 @@ export class Mat4 extends ValueType {
         m3_1.m06 = m.m08 / s.z;
         m3_1.m07 = m.m09 / s.z;
         m3_1.m08 = m.m10 / s.z;
-        const det = mat3.determinant(m3_1);
+        const det = Mat3.determinant(m3_1);
         if (det < 0) { s.x *= -1; m3_1.m00 *= -1; m3_1.m01 *= -1; m3_1.m02 *= -1; }
-        quat.fromMat3(q, m3_1); // already normalized
+        Quat.fromMat3(q, m3_1); // already normalized
         Vec3.set(v, m.m12, m.m13, m.m14);
     }
 
@@ -1499,8 +1498,7 @@ export class Mat4 extends ValueType {
             t.m04 + ', ' + t.m05 + ', ' + t.m06 + ', ' + t.m07 + ',\n' +
             t.m08 + ', ' + t.m09 + ', ' + t.m10 + ', ' + t.m11 + ',\n' +
             t.m12 + ', ' + t.m13 + ', ' + t.m14 + ', ' + t.m15 + '\n' +
-            ']'
-            ;
+            ']';
     }
 
     /**
