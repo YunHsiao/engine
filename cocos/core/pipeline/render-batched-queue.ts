@@ -41,17 +41,18 @@ export class RenderBatchedQueue {
      */
     public recordCommandBuffer (cmdBuff: GFXCommandBuffer) {
         for (const batchedBuffer of this.queue.values()) {
-            let boundPSO = false;
+            const pso = batchedBuffer.pso;
+            if (!pso) { continue; }
+            cmdBuff.bindPipelineState(pso);
+            cmdBuff.bindBindingLayout(pso.pipelineLayout.layouts[0]);
             for (let b = 0; b < batchedBuffer.batches.length; ++b) {
                 const batch = batchedBuffer.batches[b];
                 if (!batch.mergeCount) { continue; }
                 for (let v = 0; v < batch.vbs.length; ++v) {
-                    batch.vbs[v].update(batch.vbDatas[v]);
+                    cmdBuff.updateBuffer(batch.vbs[v], batch.vbDatas[v].buffer);
                 }
-                batch.vbIdx.update(batch.vbIdxData.buffer);
-                batch.ubo.update(batch.uboData.view);
-                if (!boundPSO) { cmdBuff.bindPipelineState(batch.pso); boundPSO = true; }
-                cmdBuff.bindBindingLayout(batch.pso.pipelineLayout.layouts[0]);
+                cmdBuff.updateBuffer(batch.vbIdx, batch.vbIdxData.buffer);
+                cmdBuff.updateBuffer(batchedBuffer.ubo, batch.uboData.view.buffer);
                 cmdBuff.bindInputAssembler(batch.ia);
                 cmdBuff.draw(batch.ia);
             }

@@ -630,16 +630,6 @@ export class Pass {
         }
     }
 
-    /**
-     * @zh
-     * 清空合批缓冲。
-     */
-    public clearBatchedBuffer () {
-        if (this._batchedBuffer) {
-            this._batchedBuffer.clearUBO();
-        }
-    }
-
     // states
     get priority () { return this._priority; }
     get primitive () { return this._primitive; }

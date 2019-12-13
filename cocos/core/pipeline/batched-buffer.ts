@@ -19,19 +19,25 @@ export interface IBatchedItem {
     vbCount: number;
     mergeCount: number;
     ia: GFXInputAssembler;
-    ubo: GFXBuffer;
     uboData: UBOLocalBatched;
-    pso: GFXPipelineState;
 }
 
-const _localBatched = new UBOLocalBatched();
+const UBOBinding = UBOLocalBatched.BLOCK.binding;
 
 export class BatchedBuffer {
     public batches: IBatchedItem[] = [];
     public pass: Pass;
+    public ubo: GFXBuffer;
+
+    public pso: GFXPipelineState | null = null;
 
     constructor (pass: Pass) {
         this.pass = pass;
+        this.ubo = pass.device.createBuffer({
+            usage: GFXBufferUsageBit.UNIFORM | GFXBufferUsageBit.TRANSFER_DST,
+            memUsage: GFXMemoryUsageBit.HOST | GFXMemoryUsageBit.DEVICE,
+            size: UBOLocalBatched.SIZE,
+        });
     }
 
     public destroy () {
@@ -42,18 +48,26 @@ export class BatchedBuffer {
             }
             batch.vbIdx.destroy();
             batch.ia.destroy();
-            batch.ubo.destroy();
         }
         this.batches.splice(0);
+        this.ubo.destroy();
     }
 
     public merge (subModel: SubModel, ro: IRenderObject, pso: GFXPipelineState) {
         const flatBuffers = subModel.subMeshData.flatBuffers;
         if (flatBuffers.length === 0) { return; }
+        if (!this.pso) {
+            const bindingLayout = pso.pipelineLayout.layouts[0];
+            const unit = bindingLayout.getBindingUnit(UBOBinding);
+            if (unit && !unit.buffer) {
+                bindingLayout.bindBuffer(UBOBinding, this.ubo);
+                bindingLayout.update();
+            }
+            this.pso = pso;
+        }
         let vbSize = 0;
         let vbIdxSize = 0;
         const vbCount = flatBuffers[0].count;
-        const bindingLayout = pso.pipelineLayout.layouts[0];
         let isBatchExist = false;
         for (let i = 0; i < this.batches.length; ++i) {
             const batch = this.batches[i];
@@ -98,11 +112,6 @@ export class BatchedBuffer {
 
                     // update world matrix
                     Mat4.toArray(batch.uboData.view, ro.model.transform.worldMatrix, UBOLocalBatched.MAT_WORLDS_OFFSET + batch.mergeCount * 16);
-                    if (!batch.mergeCount && batch.pso !== pso) {
-                        bindingLayout.bindBuffer(UBOLocalBatched.BLOCK.binding, batch.ubo);
-                        bindingLayout.update();
-                        batch.pso = pso;
-                    }
 
                     ++batch.mergeCount;
                     batch.vbCount += vbCount;
@@ -163,21 +172,12 @@ export class BatchedBuffer {
             vertexBuffers: totalVBS,
         });
 
-        const ubo = this.pass.device.createBuffer({
-            usage: GFXBufferUsageBit.UNIFORM | GFXBufferUsageBit.TRANSFER_DST,
-            memUsage: GFXMemoryUsageBit.HOST | GFXMemoryUsageBit.DEVICE,
-            size: UBOLocalBatched.SIZE,
-        });
-
-        bindingLayout.bindBuffer(UBOLocalBatched.BLOCK.binding, ubo);
-        bindingLayout.update();
-
         const uboData = new UBOLocalBatched();
         Mat4.toArray(uboData.view, ro.model.transform.worldMatrix, UBOLocalBatched.MAT_WORLDS_OFFSET);
 
         this.batches.push({
             mergeCount: 1,
-            vbs, vbDatas, vbIdx, vbIdxData, vbCount, ia, ubo, uboData, pso,
+            vbs, vbDatas, vbIdx, vbIdxData, vbCount, ia, uboData,
         });
     }
 
@@ -188,12 +188,6 @@ export class BatchedBuffer {
             batch.mergeCount = 0;
             batch.ia.vertexCount = 0;
         }
-    }
-
-    public clearUBO () {
-        for (let i = 0; i < this.batches.length; ++i) {
-            const batch = this.batches[i];
-            batch.ubo.update(_localBatched.view.buffer);
-        }
+        this.pso = null;
     }
 }

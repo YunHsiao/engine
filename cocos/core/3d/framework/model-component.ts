@@ -134,12 +134,12 @@ export class ModelComponent extends RenderableComponent {
         if (this._model) {
             this._model.isDynamicBatching = enable;
             this._model.onPipelineChange(); // update material
-            for (let i = 0; i < this._model.subModels.length; ++i) {
-                const subModel = this._model.subModels[i];
-                for (let p = 0; p < subModel.passes.length; ++p) {
-                    const pass = subModel.passes[p];
-                    if (enable) { pass.createBatchedBuffer(); }
-                    else { pass.clearBatchedBuffer(); }
+            if (enable) {
+                for (let i = 0; i < this._model.subModels.length; ++i) {
+                    const subModel = this._model.subModels[i];
+                    for (let p = 0; p < subModel.passes.length; ++p) {
+                        subModel.passes[p].createBatchedBuffer();
+                    }
                 }
             }
         }
