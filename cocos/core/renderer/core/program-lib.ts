@@ -68,9 +68,9 @@ function getBitCount (cnt: number) {
 
 function mapDefine (info: IDefineInfo, def: number | string | boolean) {
     switch (info.type) {
-        case 'boolean': return def as boolean ? '1' : '0';
+        case 'boolean': return (typeof def === 'number' ? def : (def ? 1 : 0)).toString();
         case 'string': return def !== undefined ? def as string : info.options![0];
-        case 'number': return (def !== undefined ? def as number : info.range![0]) + '';
+        case 'number': return (def !== undefined ? def as number : info.range![0]).toString();
     }
     console.warn(`unknown define type '${info.type}'`);
     return '-1'; // should neven happen
