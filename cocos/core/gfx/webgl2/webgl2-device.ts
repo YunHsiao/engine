@@ -1,6 +1,6 @@
 import { macro } from '../../platform';
 import { GFXDescriptorSet, IGFXDescriptorSetInfo } from '../descriptor-set';
-import { GFXBuffer, IGFXBufferInfo } from '../buffer';
+import { GFXBuffer, IGFXBufferInfo, IGFXBufferViewInfo } from '../buffer';
 import { GFXCommandBuffer, IGFXCommandBufferInfo } from '../command-buffer';
 import { GFXAPI, GFXDevice, GFXFeature, IGFXDeviceInfo, GFXBindingMappingInfo } from '../device';
 import { GFXFence, IGFXFenceInfo } from '../fence';
@@ -196,11 +196,11 @@ export class WebGL2Device extends GFXDevice {
         this._maxUniformBlockSize = gl.getParameter(gl.MAX_UNIFORM_BLOCK_SIZE);
         this._maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
         this._maxCubeMapTextureSize = gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE);
+        this._uboOffsetAlignment = gl.getParameter(gl.UNIFORM_BUFFER_OFFSET_ALIGNMENT);
         this._depthBits = gl.getParameter(gl.DEPTH_BITS);
         this._stencilBits = gl.getParameter(gl.STENCIL_BITS);
         // let maxVertexUniformBlocks = gl.getParameter(gl.MAX_VERTEX_UNIFORM_BLOCKS);
         // let maxFragmentUniformBlocks = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_BLOCKS);
-        // let uboOffsetAlignment = gl.getParameter(gl.UNIFORM_BUFFER_OFFSET_ALIGNMENT);
 
         this._devicePixelRatio = info.devicePixelRatio || 1.0;
         this._width = this._canvas.width;
@@ -315,18 +315,16 @@ export class WebGL2Device extends GFXDevice {
         console.info('DPR: ' + this._devicePixelRatio);
         console.info('SCREEN_SIZE: ' + this._width + ' x ' + this._height);
         console.info('NATIVE_SIZE: ' + this._nativeWidth + ' x ' + this._nativeHeight);
-        // console.info('COLOR_FORMAT: ' + GFXFormatInfos[this._colorFmt].name);
-        // console.info('DEPTH_STENCIL_FORMAT: ' + GFXFormatInfos[this._depthStencilFmt].name);
-        // console.info('MAX_VERTEX_ATTRIBS: ' + this._maxVertexAttributes);
+        console.info('MAX_VERTEX_ATTRIBS: ' + this._maxVertexAttributes);
         console.info('MAX_VERTEX_UNIFORM_VECTORS: ' + this._maxVertexUniformVectors);
-        // console.info('MAX_FRAGMENT_UNIFORM_VECTORS: ' + this._maxFragmentUniformVectors);
-        // console.info('MAX_TEXTURE_IMAGE_UNITS: ' + this._maxTextureUnits);
-        // console.info('MAX_VERTEX_TEXTURE_IMAGE_UNITS: ' + this._maxVertexTextureUnits);
+        console.info('MAX_FRAGMENT_UNIFORM_VECTORS: ' + this._maxFragmentUniformVectors);
+        console.info('MAX_TEXTURE_IMAGE_UNITS: ' + this._maxTextureUnits);
+        console.info('MAX_VERTEX_TEXTURE_IMAGE_UNITS: ' + this._maxVertexTextureUnits);
         console.info('MAX_UNIFORM_BUFFER_BINDINGS: ' + this._maxUniformBufferBindings);
-        // console.info('MAX_UNIFORM_BLOCK_SIZE: ' + this._maxUniformBlockSize);
+        console.info('MAX_UNIFORM_BLOCK_SIZE: ' + this._maxUniformBlockSize);
         console.info('DEPTH_BITS: ' + this._depthBits);
         console.info('STENCIL_BITS: ' + this._stencilBits);
-        // console.info('UNIFORM_BUFFER_OFFSET_ALIGNMENT: ' + uboOffsetAlignment);
+        console.info('UNIFORM_BUFFER_OFFSET_ALIGNMENT: ' + this._uboOffsetAlignment);
         if (this._EXT_texture_filter_anisotropic) {
             console.info('MAX_TEXTURE_MAX_ANISOTROPY_EXT: ' + this._EXT_texture_filter_anisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         }
@@ -455,7 +453,7 @@ export class WebGL2Device extends GFXDevice {
         return cmdBuff;
     }
 
-    public createBuffer (info: IGFXBufferInfo): GFXBuffer {
+    public createBuffer (info: IGFXBufferInfo | IGFXBufferViewInfo): GFXBuffer {
         const buffer = new WebGL2Buffer(this);
         buffer.initialize(info);
         return buffer;

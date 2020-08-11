@@ -66,6 +66,7 @@ export class WebGL2CommandBuffer extends GFXCommandBuffer {
     protected _curGPUPipelineState: IWebGL2GPUPipelineState | null = null;
     protected _curGPUDescriptorSets: IWebGL2GPUDescriptorSet[] = [];
     protected _curGPUInputAssembler: IWebGL2GPUInputAssembler | null = null;
+    protected _curDynamicOffsets: number[][] = [];
     protected _curViewport: GFXViewport | null = null;
     protected _curScissor: GFXRect | null = null;
     protected _curLineWidth: number | null = null;
@@ -112,6 +113,9 @@ export class WebGL2CommandBuffer extends GFXCommandBuffer {
         this._numDrawCalls = 0;
         this._numInstances = 0;
         this._numTris = 0;
+        for (let i = 0; i < this._curDynamicOffsets.length; i++) {
+            if (this._curDynamicOffsets[i]) this._curDynamicOffsets[i].length = 0;
+        }
     }
 
     public end () {
@@ -157,10 +161,16 @@ export class WebGL2CommandBuffer extends GFXCommandBuffer {
         }
     }
 
-    public bindDescriptorSet (set: number, descriptorSet: GFXDescriptorSet) {
+    public bindDescriptorSet (set: number, descriptorSet: GFXDescriptorSet, dynamicOffsets?: number[]) {
         const gpuDescriptorSets = (descriptorSet as WebGL2DescriptorSet).gpuDescriptorSet;
         if (gpuDescriptorSets !== this._curGPUDescriptorSets[set]) {
             this._curGPUDescriptorSets[set] = gpuDescriptorSets;
+            this._isStateInvalied = true;
+        }
+        if (dynamicOffsets) {
+            const curOffsets = this._curDynamicOffsets[set] || (this._curDynamicOffsets[set] = []);
+            for (let i = 0; i < dynamicOffsets.length; i++) curOffsets[i] = dynamicOffsets[i];
+            curOffsets.length = dynamicOffsets.length;
             this._isStateInvalied = true;
         }
     }
@@ -462,6 +472,9 @@ export class WebGL2CommandBuffer extends GFXCommandBuffer {
         const bindStatesCmd = this._webGLAllocator!.bindStatesCmdPool.alloc(WebGL2CmdBindStates);
         bindStatesCmd.gpuPipelineState = this._curGPUPipelineState;
         Array.prototype.push.apply(bindStatesCmd.gpuDescriptorSets, this._curGPUDescriptorSets);
+        for (let i = 0; i < this._curDynamicOffsets.length; i++) {
+            Array.prototype.push.apply(bindStatesCmd.dynamicOffsets, this._curDynamicOffsets[i]);
+        }
         bindStatesCmd.gpuInputAssembler = this._curGPUInputAssembler;
         bindStatesCmd.viewport = this._curViewport;
         bindStatesCmd.scissor = this._curScissor;

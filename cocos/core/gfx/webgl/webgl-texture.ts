@@ -15,7 +15,7 @@ export class WebGLTexture extends GFXTexture {
     public initialize (info: IGFXTextureInfo | IGFXTextureViewInfo): boolean {
         if ('texture' in info) {
             console.log('WebGL does not support texture view.');
-            this._status = GFXStatus.FAILED
+            this._status = GFXStatus.FAILED;
             return false;
         }
 

@@ -9,7 +9,7 @@ import { WebGLDevice } from './webgl-device';
 import { IWebGLGPUInputAssembler, IWebGLGPUUniform, IWebGLAttrib, IWebGLGPUDescriptorSet, IWebGLGPUBuffer, IWebGLGPUFramebuffer, IWebGLGPUInput,
     IWebGLGPUPipelineState, IWebGLGPUShader, IWebGLGPUTexture, IWebGLGPUUniformBlock, IWebGLGPUUniformSampler, IWebGLGPURenderPass } from './webgl-gpu-objects';
 import { GFXBufferTextureCopy, GFXBufferUsageBit, GFXClearFlag, GFXColorMask, GFXCullMode, GFXFormat,
-    GFXFormatInfos, GFXFormatSize, GFXLoadOp, GFXMemoryUsageBit, GFXSampleCount, GFXShaderType, GFXStencilFace,
+    GFXFormatInfos, GFXFormatSize, GFXLoadOp, GFXMemoryUsageBit, GFXSampleCount, GFXShaderStageFlagBit, GFXStencilFace,
     GFXTextureFlagBit, GFXTextureType, GFXType, GFXColor, GFXFormatInfo, GFXRect, GFXViewport, GFXDynamicStateFlagBit } from '../define';
 
 export function GFXFormatToWebGLType (format: GFXFormat, gl: WebGLRenderingContext): GLenum {
@@ -500,8 +500,9 @@ export class WebGLCmdBeginRenderPass extends WebGLCmdObject {
 export class WebGLCmdBindStates extends WebGLCmdObject {
 
     public gpuPipelineState: IWebGLGPUPipelineState | null = null;
-    public gpuDescriptorSets: IWebGLGPUDescriptorSet[] = [];
     public gpuInputAssembler: IWebGLGPUInputAssembler | null = null;
+    public gpuDescriptorSets: IWebGLGPUDescriptorSet[] = [];
+    public dynamicOffsets: number[] = [];
     public viewport: GFXViewport | null = null;
     public scissor: GFXRect | null = null;
     public lineWidth: number | null = null;
@@ -519,6 +520,7 @@ export class WebGLCmdBindStates extends WebGLCmdObject {
         this.gpuPipelineState = null;
         this.gpuDescriptorSets.length = 0;
         this.gpuInputAssembler = null;
+        this.dynamicOffsets.length = 0;
         this.viewport = null;
         this.scissor = null;
         this.lineWidth = null;
@@ -1208,12 +1210,12 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
         let lineNumber = 1;
 
         switch (gpuStage.type) {
-            case GFXShaderType.VERTEX: {
+            case GFXShaderStageFlagBit.VERTEX: {
                 shaderTypeStr = 'VertexShader';
                 glShaderType = gl.VERTEX_SHADER;
                 break;
             }
-            case GFXShaderType.FRAGMENT: {
+            case GFXShaderStageFlagBit.FRAGMENT: {
                 shaderTypeStr = 'FragmentShader';
                 glShaderType = gl.FRAGMENT_SHADER;
                 break;

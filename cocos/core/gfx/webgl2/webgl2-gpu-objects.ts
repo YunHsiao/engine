@@ -7,7 +7,7 @@ import {
     GFXFormat,
     GFXMemoryUsage,
     GFXSampleCount,
-    GFXShaderType,
+    GFXShaderStageFlagBit,
     GFXTextureFlags,
     GFXTextureType,
     GFXTextureUsage,
@@ -36,8 +36,9 @@ export interface IWebGL2GPUBuffer {
 
     glTarget: GLenum;
     glBuffer: WebGLBuffer | null;
+    glOffset: number;
+
     buffer: ArrayBufferView | null;
-    vf32: Float32Array | null;
     indirects: IGFXDrawInfo[];
 }
 
@@ -150,7 +151,7 @@ export interface IWebGL2GPUUniformSampler {
 }
 
 export interface IWebGL2GPUShaderStage {
-    type: GFXShaderType;
+    type: GFXShaderStageFlagBit;
     source: string;
     glShader: WebGLShader | null;
 }

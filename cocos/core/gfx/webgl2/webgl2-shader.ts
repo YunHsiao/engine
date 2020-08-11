@@ -36,7 +36,7 @@ export class WebGL2Shader extends GFXShader {
         for (let i = 0; i < info.stages.length; ++i) {
             const stage = info.stages[i];
             this._gpuShader.gpuStages[i] = {
-                type: stage.type,
+                type: stage.stage,
                 source: stage.source,
                 glShader: null,
             };

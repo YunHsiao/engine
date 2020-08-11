@@ -14,7 +14,7 @@ import {
     GFXLoadOp,
     GFXMemoryUsageBit,
     GFXSampleCount,
-    GFXShaderType,
+    GFXShaderStageFlagBit,
     GFXStencilFace,
     GFXTextureFlagBit,
     GFXTextureType,
@@ -683,8 +683,9 @@ export class WebGL2CmdBeginRenderPass extends WebGL2CmdObject {
 export class WebGL2CmdBindStates extends WebGL2CmdObject {
 
     public gpuPipelineState: IWebGL2GPUPipelineState | null = null;
-    public gpuDescriptorSets: IWebGL2GPUDescriptorSet[] = [];
     public gpuInputAssembler: IWebGL2GPUInputAssembler | null = null;
+    public gpuDescriptorSets: IWebGL2GPUDescriptorSet[] = [];
+    public dynamicOffsets: number[] = [];
     public viewport: GFXViewport | null = null;
     public scissor: GFXRect | null = null;
     public lineWidth: number | null = null;
@@ -700,8 +701,9 @@ export class WebGL2CmdBindStates extends WebGL2CmdObject {
 
     public clear () {
         this.gpuPipelineState = null;
-        this.gpuDescriptorSets.length = 0;
         this.gpuInputAssembler = null;
+        this.gpuDescriptorSets.length = 0;
+        this.dynamicOffsets.length = 0;
         this.viewport = null;
         this.scissor = null;
         this.lineWidth = null;
@@ -993,6 +995,7 @@ export function WebGL2CmdFuncUpdateBuffer (device: WebGL2Device, gpuBuffer: IWeb
         const buff = buffer as ArrayBuffer;
         const gl = device.gl;
         const cache = device.stateCache;
+        const glOffset = offset + gpuBuffer.glOffset;
 
         switch (gpuBuffer.glTarget) {
             case gl.ARRAY_BUFFER: {
@@ -1007,9 +1010,9 @@ export function WebGL2CmdFuncUpdateBuffer (device: WebGL2Device, gpuBuffer: IWeb
                 }
 
                 if (size === buff.byteLength) {
-                    gl.bufferSubData(gpuBuffer.glTarget, offset, buff);
+                    gl.bufferSubData(gpuBuffer.glTarget, glOffset, buff);
                 } else {
-                    gl.bufferSubData(gpuBuffer.glTarget, offset, buff.slice(0, size));
+                    gl.bufferSubData(gpuBuffer.glTarget, glOffset, buff.slice(0, size));
                 }
                 break;
             }
@@ -1025,9 +1028,9 @@ export function WebGL2CmdFuncUpdateBuffer (device: WebGL2Device, gpuBuffer: IWeb
                 }
 
                 if (size === buff.byteLength) {
-                    gl.bufferSubData(gpuBuffer.glTarget, offset, buff);
+                    gl.bufferSubData(gpuBuffer.glTarget, glOffset, buff);
                 } else {
-                    gl.bufferSubData(gpuBuffer.glTarget, offset, buff.slice(0, size));
+                    gl.bufferSubData(gpuBuffer.glTarget, glOffset, buff.slice(0, size));
                 }
                 break;
             }
@@ -1038,10 +1041,9 @@ export function WebGL2CmdFuncUpdateBuffer (device: WebGL2Device, gpuBuffer: IWeb
                 }
 
                 if (size === buff.byteLength) {
-                    gl.bufferSubData(gpuBuffer.glTarget, offset, buff);
-                    // if (gl.getBufferParameter(gl.UNIFORM_BUFFER, gl.BUFFER_SIZE) !== buff.length * 4) { debugger; }
+                    gl.bufferSubData(gpuBuffer.glTarget, glOffset, buff);
                 } else {
-                    gl.bufferSubData(gpuBuffer.glTarget, offset, new Float32Array(buff, 0, size / 4));
+                    gl.bufferSubData(gpuBuffer.glTarget, glOffset, new Float32Array(buff, 0, size / 4));
                 }
                 break;
             }
@@ -1495,12 +1497,12 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
         let lineNumber = 1;
 
         switch (gpuStage.type) {
-            case GFXShaderType.VERTEX: {
+            case GFXShaderStageFlagBit.VERTEX: {
                 shaderTypeStr = 'VertexShader';
                 glShaderType = gl.VERTEX_SHADER;
                 break;
             }
-            case GFXShaderType.FRAGMENT: {
+            case GFXShaderStageFlagBit.FRAGMENT: {
                 shaderTypeStr = 'FragmentShader';
                 glShaderType = gl.FRAGMENT_SHADER;
                 break;

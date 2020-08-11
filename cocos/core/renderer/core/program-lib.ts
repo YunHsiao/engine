@@ -28,7 +28,7 @@
  */
 
 import { IBlockInfo, IBuiltinInfo, IDefineInfo, ISamplerInfo, IShaderInfo } from '../../assets/effect-asset';
-import { GFXDescriptorType, GFXGetTypeSize, GFXShaderType } from '../../gfx/define';
+import { GFXDescriptorType, GFXGetTypeSize, GFXShaderStageFlagBit } from '../../gfx/define';
 import { GFXAPI, GFXDevice } from '../../gfx/device';
 import { IGFXAttribute } from '../../gfx/input-assembler';
 import { GFXUniformBlock, GFXShaderInfo, GFXUniformSampler } from '../../gfx/shader';
@@ -50,7 +50,7 @@ export interface IProgramInfo extends IShaderInfo {
     samplers: ISamplerInfo[];
     defines: IDefineRecord[];
     handleMap: Record<string, number>;
-    descriptors: GFXDescriptorType[];
+    descriptorSetLayout: GFXDescriptorType[];
     globalsInited: boolean;
     localsInited: boolean;
     uber: boolean; // macro number exceeds default limits
@@ -95,29 +95,22 @@ function insertBuiltinBindings (tmpl: IProgramInfo, source: IDescriptorSetLayout
     const target = tmpl.builtins[type] as IBuiltinInfo;
     const blocks = tmpl.blocks;
     for (const b of target.blocks) {
-        const info = source.layouts[b.name] as GFXUniformBlock;
+        const info = source.layouts[b.name] as IBlockInfo;
         if (!info || source.descriptors[info.binding] !== GFXDescriptorType.UNIFORM_BUFFER) {
             console.warn(`builtin UBO '${b.name}' not available!`);
             continue;
         }
-        const builtin: IBlockInfoRT = Object.assign({
-            defines: b.defines,
-            size: getSize(info),
-            count: 1,
-        }, info);
+        const builtin: IBlockInfoRT = Object.assign({ size: getSize(info) }, info);
         blocks.push(builtin);
     }
     const samplers = tmpl.samplers;
     for (const s of target.samplers) {
-        const info = source.layouts[s.name] as GFXUniformSampler;
+        const info = source.layouts[s.name] as ISamplerInfo;
         if (!info || source.descriptors[info.binding] !== GFXDescriptorType.SAMPLER) {
             console.warn(`builtin sampler '${s.name}' not available!`);
             continue;
         }
-        const builtin = Object.assign({
-            defines: s.defines,
-        }, info);
-        samplers.push(builtin);
+        samplers.push(info);
     }
 }
 
@@ -204,7 +197,7 @@ class ProgramLib {
         if (offset > 31) { tmpl.uber = true; }
 
         // cache material-specific descriptor set layout
-        const descriptors: GFXDescriptorType[] = tmpl.descriptors = [];
+        const descriptors: GFXDescriptorType[] = tmpl.descriptorSetLayout = [];
         for (let i = 0; i < tmpl.blocks.length; i++) {
             const block = tmpl.blocks[i];
             block.size = getSize(block);
@@ -337,8 +330,8 @@ class ProgramLib {
             name: getShaderInstanceName(name, macroArray),
             blocks: tmpl.blocks, samplers: tmpl.samplers, attributes,
             stages: [
-                { type: GFXShaderType.VERTEX, source: prefix + src.vert },
-                { type: GFXShaderType.FRAGMENT, source: prefix + src.frag },
+                { stage: GFXShaderStageFlagBit.VERTEX, source: prefix + src.vert },
+                { stage: GFXShaderStageFlagBit.FRAGMENT, source: prefix + src.frag },
             ],
         } as GFXShaderInfo);
     }

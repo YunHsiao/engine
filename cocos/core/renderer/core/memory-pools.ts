@@ -206,6 +206,7 @@ enum PoolType {
     PASS,
     SUB_MODEL,
 }
+
 export type RasterizerStateHandle = Handle<PoolType.RASTERIZER_STATE>;
 export type DepthStencilStateHandle = Handle<PoolType.DEPTH_STENCIL_STATE>;
 export type BlendStateHandle = Handle<PoolType.BLEND_STATE>;

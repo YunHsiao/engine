@@ -533,7 +533,7 @@ export class Pass {
         if (info.stateOverrides) { Pass.fillPipelineInfo(handle, info.stateOverrides); }
 
         // init descriptor set
-        _dsInfo.layout = this._shaderInfo.descriptors;
+        _dsInfo.layout = this._shaderInfo.descriptorSetLayout;
         const dsHandle = DSPool.alloc(this._device, _dsInfo);
         PassPool.set(this._handle, PassView.DESCRIPTOR_SET, dsHandle);
         this._descriptorSet = DSPool.get(dsHandle);

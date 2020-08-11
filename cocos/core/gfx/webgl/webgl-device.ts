@@ -2,7 +2,7 @@ import { ALIPAY, RUNTIME_BASED } from 'internal:constants';
 import { macro } from '../../platform';
 import { sys } from '../../platform/sys';
 import { GFXDescriptorSet, IGFXDescriptorSetInfo } from '../descriptor-set';
-import { GFXBuffer, IGFXBufferInfo } from '../buffer';
+import { GFXBuffer, IGFXBufferInfo, IGFXBufferViewInfo } from '../buffer';
 import { GFXCommandBuffer, IGFXCommandBufferInfo } from '../command-buffer';
 import { GFXAPI, GFXDevice, GFXFeature, IGFXDeviceInfo, GFXBindingMappingInfo } from '../device';
 import { GFXFence, IGFXFenceInfo } from '../fence';
@@ -547,7 +547,7 @@ export class WebGLDevice extends GFXDevice {
         return cmdBuff;
     }
 
-    public createBuffer (info: IGFXBufferInfo): GFXBuffer {
+    public createBuffer (info: IGFXBufferInfo | IGFXBufferViewInfo): GFXBuffer {
         const buffer = new WebGLBuffer(this);
         buffer.initialize(info);
         return buffer;
