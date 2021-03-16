@@ -366,8 +366,7 @@ export enum BufferUsageBit {
 }
 
 export enum BufferFlagBit {
-    NONE         = 0,
-    BAKUP_BUFFER = 0x4,
+    NONE = 0,
 }
 
 export enum MemoryAccessBit {
@@ -407,8 +406,7 @@ export enum TextureUsageBit {
 export enum TextureFlagBit {
     NONE         = 0,
     GEN_MIPMAP   = 0x1,
-    BAKUP_BUFFER = 0x2,
-    IMMUTABLE    = 0x4,
+    IMMUTABLE    = 0x2,
 }
 
 export enum SampleCount {
@@ -748,8 +746,8 @@ export class Rect {
     constructor (
         public x: number = 0,
         public y: number = 0,
-        public width: number = 1,
-        public height: number = 1,
+        public width: number = 0,
+        public height: number = 0,
     ) {}
 
     public copy (info: Rect) {
